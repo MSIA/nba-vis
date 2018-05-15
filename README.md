@@ -1,2 +1,3 @@
 # NBA visualization   
-Visualizing the coolest trend in the NBA
+### Luca, Chris, Matt, Joe
+Visualizing the coolest trends in the NBA
