@@ -43,10 +43,17 @@
 <!-- python -m http.server 8001 -->
 <svg width="960" height="500"></svg>  
 <body>
+
+<!-- Sample text output !-->
+<p id="demo"></p>
+<p id="demo1"></p>
+
+
+
 <script src="//d3js.org/d3.v4.min.js"></script>
 <script>
 
-//ORIGINAL
+//Slider svg
 var svg = d3.select("svg"),
     tmargin = {right: 50, left: 50},
     twidth = +svg.attr("width") - tmargin.left - tmargin.right,
@@ -72,7 +79,7 @@ slider.append("line")
     .attr("class", "track-overlay")
     .call(d3.drag()
         .on("start.interrupt", function() { slider.interrupt(); })
-        .on("start drag", function() { hue(x_t.invert(d3.event.x)); }) //); // this changes color
+        //.on("start drag", function() { hue(x_t.invert(d3.event.x)); }) //); // this changes color
         .on("end drag", function() { update_year(x_t.invert(d3.event.x));}));  //updates year
 
 slider.insert("g", ".track-overlay")
@@ -96,11 +103,13 @@ var handle = slider.insert("circle", ".track-overlay")
 //       return function(t) { hue(i(t)); };
 //     });
 
+//Change color on slide (Turned off)
 function hue(h) {
   handle.attr("cx", x_t(h));
   svg.style("background-color", d3.hsl(h, 0.8, 0.8));
 }
 
+//Update global year variable, update text
 var yearout = 0
 function update_year(h) {
 	handle.attr("cx", x_t(h));
@@ -121,7 +130,7 @@ function update_year(h) {
 }
 
 
-// LETS TRY TO INCORPORATE BAR CHART
+//INCORPORATE BAR CHART
 /////////////////////////////////////
 var margin = {top: 40, right: 40, bottom: 60, left: 130},
     width = 960 - margin.left - margin.right, 
@@ -140,7 +149,6 @@ var z = d3.scaleOrdinal()
 
 
 /// create svg
-
 var nbar = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right + 40)
     .attr("height", height + margin.top + margin.bottom)
@@ -148,7 +156,7 @@ var nbar = d3.select("body").append("svg")
     .attr("transform", 
           "translate(" + margin.left + "," + margin.top + ")");
 
-//update svg
+//Function to update svg
 function build_bar(ye){
 year = ye
 nbar.selectAll(".bar").remove();
@@ -161,10 +169,12 @@ d3.csv("../Data/team_means.csv", function(error, data) {
   data.forEach(function(d){
   		d.Year = +d.Year
     	d.height = +d.height
+    	d.Age = +d.Age
+    	d.Age = Math.round(d.Age)
     
   })
   
-  //year = 2000 //year preset
+  //Filter data based on slider year
   var data = data.filter(function(d) { return d.Year == window['year']; });
 	console.log(data)
   
@@ -177,7 +187,7 @@ d3.csv("../Data/team_means.csv", function(error, data) {
   y.domain(data.map(function(d) { return d.Tm; }));
   
 
-  // append the rectangles for the bar chart
+  //append the rectangles for the bar chart
   nbar.selectAll(".bar")
       .data(data)
     .enter().append("rect")
@@ -185,7 +195,7 @@ d3.csv("../Data/team_means.csv", function(error, data) {
       .attr("width", function(d) {return x(d.height); } )
       .attr("y", function(d) { return y(d.Tm); })
       .attr("height", y.bandwidth())
-      .attr("fill", function(d) { return z(Math.round(d["age"])); }); 
+      .attr("fill", function(d) { return z(Math.round(d["Age"])); }); 
       
 
   // add the x Axis
@@ -211,6 +221,31 @@ d3.csv("../Data/team_means.csv", function(error, data) {
   nbar.append("g")
       .call(d3.axisLeft(y));
       
+// Add Legend
+var legend = nbar.append("g")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", 10)
+      .attr("text-anchor", "end")
+    .selectAll("g")
+    .data(d3.map(data.sort(function(a, b) {
+        return d3.ascending(a.Age, b.Age)
+      })
+      , function(d){return d["Age"];}).keys())
+    .enter().append("g")
+      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+  legend.append("rect")
+      .attr("x", width + 50) //19
+      .attr("width", 19)
+      .attr("height", 19)
+      .attr("fill", z);
+
+  legend.append("text")
+      .attr("x", width + 50 - 5) 
+      .attr("y", 9.5)
+      .attr("dy", "0.32em")
+      .text(function(d) { return d+" yrs"; });
+
 
       
 });
@@ -220,9 +255,4 @@ d3.csv("../Data/team_means.csv", function(error, data) {
 
 </script>
 
-
-
-
-<p id="demo"></p>
-<p id="demo1"></p>
 </body>
