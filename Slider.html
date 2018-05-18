@@ -41,7 +41,11 @@
 
 
 <!-- python -m http.server 8001 -->
-<svg width="960" height="500"></svg>  
+<svg width="960" height="500">
+  <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
+        <feImage xlink:href="https://windycitizensports.files.wordpress.com/2012/04/lebron-crying.jpg"/>
+  </filter>
+</svg>  
 <body>
 
 <!-- Sample text output !-->
@@ -94,7 +98,8 @@ slider.insert("g", ".track-overlay")
 
 var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
-    .attr("r", 9);
+    .attr("r", 25)
+    .attr("filter", "url(#this_image)");
 
 slider.transition() // Gratuitous intro!
     .duration(750)
