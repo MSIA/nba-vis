@@ -37,8 +37,6 @@
   stroke-width: 1.25px;
 }
 
-
-
 path {
   stroke: lightblue;
   stroke-width: 0.25px;
@@ -83,12 +81,12 @@ div.tooltip {
 <p id="demo1"></p>
 
 
-
+<!-- IMPORTS -->
 <script src="//d3js.org/d3.v4.min.js"></script>
 <script src="http://d3js.org/topojson.v0.min.js"></script>
 <script>
 
-//////-----Can we read data in separately?----/////////
+//////-----READ IN DATA----/////////
 mapcsv = 0
 d3.csv("./Chris Globe/MapData.csv")
 			.get(function(data){
@@ -99,14 +97,15 @@ mapjson = 0
 d3.json("./Chris Globe/world-110m2.json")
 		.get(function(data){
 			window['mapjson'] = data});
-			
+
+var parseYear = d3.timeParse("%Y");		
 lucadata = 0
 d3.csv("./Luca-Line/data.csv")
 		.get(function(data){
-		data.forEach(function(d){d.X3PA = +d.X3PA ; d.X3P = +d.X3P;})
+		data.forEach(function(d){d.X3PA = +d.X3PA ; d.X3P = +d.X3P; d.date = parseYear(d.Year).getFullYear()})
 		window['lucadata'] = data});
 		
-/////-------- Data in END -------------//////////
+/////---------------------//////////
 
 
 //Slider svg
@@ -117,7 +116,7 @@ var svg = d3.select("svg"),
 
 
 var x_t = d3.scaleLinear()
-    .domain([1976, 2010])
+    .domain([1976, 2015]) 
     .range([0, twidth])
     .clamp(true);
 
@@ -135,8 +134,8 @@ slider.append("line")
     .attr("class", "track-overlay")
     .call(d3.drag()
         .on("start.interrupt", function() { slider.interrupt(); })
-        //.on("start drag", function() { hue(x_t.invert(d3.event.x)); }) //); // this changes color
-        .on("end drag", function() { update_year(x_t.invert(d3.event.x));}));  //updates year
+        .on("start drag", function() { update_year(x_t.invert(d3.event.x)); }) ); 
+        //.on("end drag", function() { update_year(x_t.invert(d3.event.x));}));  
 
 slider.insert("g", ".track-overlay")
     .attr("class", "ticks")
@@ -160,27 +159,26 @@ slider.transition() // Gratuitous intro!
       return function(t) { update_year(i(t)); };
     });
 
-
-
-
-
-
-//Change color on slide (Turned off)
+///////------- SLIDER FUNCTIONS ------//////////////
+//Change color on slide 
 function hue(h) {
   handle.attr("cx", x_t(h));
   svg.style("background-color", d3.hsl(h, 0.8, 0.8));
 }
 
-//Update global year variable, update text
+//-------MAIN-----------//
 var yearout = 0
+
 function update_year(h) {
 	handle.attr("cx", x_t(h));
 	ye = Math.round(h);
 	document.getElementById("demo").innerHTML = ye +" --- " + yearout;
 	
+	//SET GLOBAL VARIABLES
 	window['year'] = ye;
 	window['yearout'] = ye;
-
+	
+	//EXECUTE PLOT FUNCTIONS
 	//build_bar(ye);
 	lucaline(ye,lucadata);
 	newmapbuilder(ye,mapcsv,mapjson);
@@ -197,8 +195,8 @@ function update_year(h) {
 	}
 }
 
-
-//INCORPORATE MAP
+///////----------------INITIATE SVGS FOR EACH PLOT-------//////////////
+// MAP
 var mwidth = 960,
     mheight = 500;
 
@@ -214,8 +212,7 @@ var svg = d3.select("body").append("svg")
 var path = d3.geoPath()
     .projection(projection);
 
-// INCORPORATE LUCA LINE
-//------------------------------------------------
+// LUCA LINE
 // set the dimensions and margins of the graph
 var lmargin = {top: 20, right: 20, bottom: 30, left: 50},
     lwidth = 960 - lmargin.left - lmargin.right,
@@ -227,7 +224,7 @@ var y = d3.scaleLinear().range([lheight, 0]);
 
 // define the area
 var area = d3.area()
-    .x(function(d) { return x(d.Year); })
+    .x(function(d) { return x(d.Year); }) //Year
     .y0(lheight)
     .y1(function(d) { return y(d.X3P); });
 
@@ -246,38 +243,33 @@ var lsvg = d3.select("body").append("svg")
     .attr("transform",
           "translate(" + lmargin.left + "," + lmargin.top + ")");
 
-
-/////--------------LUCA LINE FUNCTION-----------------//////
+/////////---------FUNCTIONS FOR CREATING & UPDATING PLOTS---------////////////
+//LUCA LINE FUNCTION
 function lucaline(ye,lucadata){
-
-lsvg.selectAll("path").remove();
-lsvg.selectAll("line").remove();
-lsvg.selectAll("g").remove();
-
-// get the data
-d3.csv("./Luca-Line/data.csv", function(error, data) {
-  if (error) throw error;
-
-  // format the data
-  data.forEach(function(d) {
-      d.X3PA = +d.X3PA;
-      d.X3P = +d.X3P;
-  });
+  
+  sye = ""+ye;
+  
+  lsvg.selectAll("path").remove();
+  lsvg.selectAll("line").remove();
+  lsvg.selectAll("g").remove();
 
   
   // find min and max for axis
-  var datamax = d3.max(data, function(d){return d.Year;})
-  var datamin = d3.min(data, function(d){return d.Year;})
+  var datamax = d3.max(lucadata, function(d){return d.Year;}) // Year
+  var datamin = d3.min(lucadata, function(d){return d.Year;})
 
+  var ymax = d3.max(lucadata, function(d){return d.X3PA;})
   
   // filter out our year
-  var data = data.filter(function(d) { return d.Year <= ye ; }) //year filter
-
+  var data = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
+  //var data = lucadata.filter(function(d){return d.Year <= ye;})
   
   // scale the range of the data
   x.domain([datamin, datamax]);
-  y.domain([0, d3.max(data, function(d) { return d.X3PA; })]);
+  //x.domain(d3.extent(lucadata, function(d) { return d.date; }));
+  y.domain([0, ymax]);
 
+//console.log(ye + "----" + parseTime(sye))
   // add the area
     lsvg.append("path")
        .data([data])
@@ -287,25 +279,25 @@ d3.csv("./Luca-Line/data.csv", function(error, data) {
   // add the valueline path.
   lsvg.append("path")
       .data([data])
-      //.filter(function(d) { return d.Year <= window['year']; })
       .attr("class", "line")
       .attr("d", valueline);
 
+var xValues = lucadata.map(function(d){return parseFloat(d.Year);});
   // add the X Axis
   lsvg.append("g")
       .attr("transform", "translate(0," + lheight + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x)
+      .tickFormat(d3.format(".4r")));
 
   // add the Y Axis
   lsvg.append("g")
       .call(d3.axisLeft(y));
 
-});
 
 }
 
 
-//////------------NEW MAPBUILDER (NO ZOOM)-----------///////
+//NEW MAPBUILDER (NO ZOOM)
 function newmapbuilder(ye,mapcsv,mapjson){
 
 var g = svg.append("g");
@@ -371,7 +363,7 @@ svg.call(zoom)
 
 
 
-//////------ORIGINAL MAPBUILDER-------///////
+//ORIGINAL MAPBUILDER
 function mapbuilder(ye){
 
 
@@ -444,7 +436,7 @@ svg.call(zoom)
 }
 
 
-//----------UPDATE BAR (TEST)----------;;;;
+//UPDATE BAR (TEST)
 function build_bar(ye){
 year = ye
 nbar.selectAll(".bar").remove();
