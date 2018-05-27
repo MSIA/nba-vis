@@ -58,7 +58,15 @@ div.tooltip {
     pointer-events: none;			
 }
 
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
 
+.area {
+  fill: lightsteelblue;
+}
 </style>
 
 
@@ -79,6 +87,27 @@ div.tooltip {
 <script src="//d3js.org/d3.v4.min.js"></script>
 <script src="http://d3js.org/topojson.v0.min.js"></script>
 <script>
+
+//////-----Can we read data in separately?----/////////
+mapcsv = 0
+d3.csv("./Chris Globe/MapData.csv")
+			.get(function(data){
+			data.forEach(function(d){d.Year=+d.Year})
+			window['mapcsv'] = data});
+
+mapjson = 0   
+d3.json("./Chris Globe/world-110m2.json")
+		.get(function(data){
+			window['mapjson'] = data});
+			
+lucadata = 0
+d3.csv("./Luca-Line/data.csv")
+		.get(function(data){
+		data.forEach(function(d){d.X3PA = +d.X3PA ; d.X3P = +d.X3P;})
+		window['lucadata'] = data});
+		
+/////-------- Data in END -------------//////////
+
 
 //Slider svg
 var svg = d3.select("svg"),
@@ -131,6 +160,11 @@ slider.transition() // Gratuitous intro!
       return function(t) { update_year(i(t)); };
     });
 
+
+
+
+
+
 //Change color on slide (Turned off)
 function hue(h) {
   handle.attr("cx", x_t(h));
@@ -148,7 +182,8 @@ function update_year(h) {
 	window['yearout'] = ye;
 
 	//build_bar(ye);
-	mapbuilder(ye);
+	lucaline(ye,lucadata);
+	newmapbuilder(ye,mapcsv,mapjson);
 
   if (year <= 1985) {
     document.getElementById("demo1").innerHTML = "";
@@ -179,8 +214,164 @@ var svg = d3.select("body").append("svg")
 var path = d3.geoPath()
     .projection(projection);
 
+// INCORPORATE LUCA LINE
+//------------------------------------------------
+// set the dimensions and margins of the graph
+var lmargin = {top: 20, right: 20, bottom: 30, left: 50},
+    lwidth = 960 - lmargin.left - lmargin.right,
+    lheight = 500 - lmargin.top - lmargin.bottom;
 
-//////---------------------------///////
+// set the ranges
+var x = d3.scaleLinear().range([0, lwidth]);
+var y = d3.scaleLinear().range([lheight, 0]);
+
+// define the area
+var area = d3.area()
+    .x(function(d) { return x(d.Year); })
+    .y0(lheight)
+    .y1(function(d) { return y(d.X3P); });
+
+// define the line
+var valueline = d3.line()
+    .x(function(d) { return x(d.Year); })
+    .y(function(d) { return y(d.X3PA); });
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var lsvg = d3.select("body").append("svg")
+    .attr("width", lwidth + lmargin.left + lmargin.right)
+    .attr("height", lheight + lmargin.top + lmargin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + lmargin.left + "," + lmargin.top + ")");
+
+
+/////--------------LUCA LINE FUNCTION-----------------//////
+function lucaline(ye,lucadata){
+
+lsvg.selectAll("path").remove();
+lsvg.selectAll("line").remove();
+lsvg.selectAll("g").remove();
+
+// get the data
+d3.csv("./Luca-Line/data.csv", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+      d.X3PA = +d.X3PA;
+      d.X3P = +d.X3P;
+  });
+
+  
+  // find min and max for axis
+  var datamax = d3.max(data, function(d){return d.Year;})
+  var datamin = d3.min(data, function(d){return d.Year;})
+
+  
+  // filter out our year
+  var data = data.filter(function(d) { return d.Year <= ye ; }) //year filter
+
+  
+  // scale the range of the data
+  x.domain([datamin, datamax]);
+  y.domain([0, d3.max(data, function(d) { return d.X3PA; })]);
+
+  // add the area
+    lsvg.append("path")
+       .data([data])
+       .attr("class", "area")
+       .attr("d", area);
+
+  // add the valueline path.
+  lsvg.append("path")
+      .data([data])
+      //.filter(function(d) { return d.Year <= window['year']; })
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // add the X Axis
+  lsvg.append("g")
+      .attr("transform", "translate(0," + lheight + ")")
+      .call(d3.axisBottom(x));
+
+  // add the Y Axis
+  lsvg.append("g")
+      .call(d3.axisLeft(y));
+
+});
+
+}
+
+
+//////------------NEW MAPBUILDER (NO ZOOM)-----------///////
+function newmapbuilder(ye,mapcsv,mapjson){
+
+var g = svg.append("g");
+
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+
+//Load map
+g.selectAll("path")
+      .data(topojson.object(mapjson, mapjson.objects.countries)
+          .geometries)
+    .enter()
+      .append("path")
+      .attr("d", path)
+
+
+
+//Load values
+    //var m_data = mapcsv.filter(function(d) { return d.Year == ye; }); //year filter
+    g.selectAll("circle")
+       .data(mapcsv)
+       .enter()
+       .filter(function(d) { return d.Year == ye; })
+       .append("circle")
+            .attr("cx", function(d) {
+                    return projection([d.Longitude, d.Latitude])[0];
+            })
+            .attr("cy", function(d) {
+                    return projection([d.Longitude, d.Latitude])[1];
+            })
+            .on("mouseover", function(d) {		
+                    div.transition()		
+                        .duration(200)		
+                        .style("opacity", .9);		
+                    div .html(d.Player+ "<br/>"  + d.birth_city+", "+ d.birth_country)	
+                        .style("left", (d3.event.pageX) + "px")		
+                        .style("top", (d3.event.pageY - 28) + "px");	
+                    })					
+            .on("mouseout", function(d) {		
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0)
+            })	
+
+            .attr("r", 1.5)
+            .style("fill", "#2b8cbe");
+
+// zoom and pan
+var zoom = d3.zoom()
+    .on("zoom",function() {
+        g.attr("transform", d3.event.transform);
+        g.selectAll("circle")
+            .attr("d", path.projection(projection));
+        g.selectAll("path")  
+            .attr("d", path.projection(projection)); 
+
+  });
+svg.call(zoom)
+
+}
+
+
+
+//////------ORIGINAL MAPBUILDER-------///////
 function mapbuilder(ye){
 
 
@@ -252,33 +443,8 @@ var zoom = d3.zoom()
 svg.call(zoom)
 }
 
-/////---------------------------////
 
-// var margin = {top: 40, right: 40, bottom: 60, left: 130},
-//     width = 960 - margin.left - margin.right, 
-//     height = 600 - margin.top - margin.bottom;
-// 
-// // set the ranges
-// var y = d3.scaleBand()
-//           .range([height, 0])
-//           .padding(0.12);
-// 
-// var x = d3.scaleLinear()
-//           .range([0, width]);
-// 
-// var z = d3.scaleOrdinal()
-//     .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-// 
-// 
-// /// create svg
-// var nbar = d3.select("body").append("svg")
-//     .attr("width", width + margin.left + margin.right + 40)
-//     .attr("height", height + margin.top + margin.bottom)
-//   .append("g")
-//     .attr("transform", 
-//           "translate(" + margin.left + "," + margin.top + ")");
-
-//Function to update svg
+//----------UPDATE BAR (TEST)----------;;;;
 function build_bar(ye){
 year = ye
 nbar.selectAll(".bar").remove();

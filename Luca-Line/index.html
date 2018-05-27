@@ -19,6 +19,9 @@
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
+// Set year
+year = 2000
+
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
@@ -59,10 +62,22 @@ d3.csv("data.csv", function(error, data) {
       d.X3P = +d.X3P;
   });
 
+  //Checks
   console.log(data)
-
+  console.log(window['year'])
+  
+  // find min and max for axis
+  var datamax = d3.max(data, function(d){return d.Year;})
+  var datamin = d3.min(data, function(d){return d.Year;})
+  console.log(datamax , datamin)
+  
+  // filter out our year
+  var data = data.filter(function(d) { return d.Year <= window['year']; }) //year filter
+  console.log(data)
+  
   // scale the range of the data
-  x.domain(d3.extent(data, function(d) { return d.Year; }));
+  //x.domain(d3.extent(data, function(d) { return d.Year; }));
+  x.domain([datamin, datamax]);
   y.domain([0, d3.max(data, function(d) { return d.X3PA; })]);
 
   // add the area
@@ -74,6 +89,7 @@ d3.csv("data.csv", function(error, data) {
   // add the valueline path.
   svg.append("path")
       .data([data])
+      //.filter(function(d) { return d.Year <= window['year']; })
       .attr("class", "line")
       .attr("d", valueline);
 
