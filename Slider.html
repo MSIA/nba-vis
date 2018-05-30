@@ -72,6 +72,12 @@ div.tooltip {
     font-size: 180%;
 }
 
+#svg1 {
+  position: relative;
+  top: 100px;
+  left: 350px;
+}
+
 </style>
 
 <!-- python -m http.server 8001 -->
@@ -84,7 +90,7 @@ div.tooltip {
 
 <p id="demo"></p>
 
-<svg width="960" height="500"> 
+<svg id="svg1" width="960" height="500"> 
   <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
         <feImage xlink:href="https://windycitizensports.files.wordpress.com/2012/04/lebron-crying.jpg"/>
   </filter>
@@ -92,7 +98,8 @@ div.tooltip {
 <!-- Sample text output !-->
 
 <p id="demo1"></p>
-
+<div id="line"></div>
+<div id="map"></div>
 
 <!-- IMPORTS -->
 <script src="//d3js.org/d3.v4.min.js"></script>
@@ -133,7 +140,8 @@ var x_t = d3.scaleLinear()
     .range([0, twidth])
     .clamp(true);
 
-var slider = svg.append("g") 
+var slider = svg.append("g")
+	//.style("float","center") 
     .attr("class", "slider")
     .attr("transform", "translate(" + tmargin.left + "," + theight / 2 + ")");
 
@@ -166,7 +174,7 @@ var handle = slider.insert("circle", ".track-overlay")
     .attr("filter", "url(#this_image)");
 
 slider.transition() // Gratuitous intro!
-    .duration(750)
+    .duration(1500)
     .tween("hue", function() {
       var i = d3.interpolate(1976, 2000);
       return function(t) { update_year(i(t)); };
@@ -218,7 +226,7 @@ var projection = d3.geoMercator()
     .scale(150)
     .rotate([-10,0]);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#map").append("svg")
     .attr("width", mwidth)
     .attr("height", mheight);
 
@@ -249,7 +257,8 @@ var valueline = d3.line()
 // append the svg obgect to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
-var lsvg = d3.select("body").append("svg")
+var lsvg = d3.select("#line").append("svg")
+	//.style("float","left")
     .attr("width", lwidth + lmargin.left + lmargin.right)
     .attr("height", lheight + lmargin.top + lmargin.bottom)
   .append("g")
@@ -547,4 +556,6 @@ var legend = nbar.append("g")
 
 
 </script>
+
+
 </body>
