@@ -65,19 +65,32 @@ div.tooltip {
 .area {
   fill: lightsteelblue;
 }
+
+
+#demo {
+    color: gray;
+    font-size: 180%;
+}
+
 </style>
 
-
 <!-- python -m http.server 8001 -->
-<svg width="960" height="500">
+ 
+<body>
+
+<head>
+	<h1> Changing The Game: The NBA from 1976 to 2015 </h1> 
+</head>
+
+<p id="demo"></p>
+
+<svg width="960" height="500"> 
   <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
         <feImage xlink:href="https://windycitizensports.files.wordpress.com/2012/04/lebron-crying.jpg"/>
   </filter>
-</svg>  
-<body>
-
+</svg> 
 <!-- Sample text output !-->
-<p id="demo"></p>
+
 <p id="demo1"></p>
 
 
@@ -134,8 +147,8 @@ slider.append("line")
     .attr("class", "track-overlay")
     .call(d3.drag()
         .on("start.interrupt", function() { slider.interrupt(); })
-        .on("start drag", function() { update_year(x_t.invert(d3.event.x)); }) ); 
-        //.on("end drag", function() { update_year(x_t.invert(d3.event.x));}));  
+        .on("start drag", function() { update_year(x_t.invert(d3.event.x)); }) //); 
+        .on("end drag", function() { update_year(x_t.invert(d3.event.x));}));  
 
 slider.insert("g", ".track-overlay")
     .attr("class", "ticks")
@@ -172,7 +185,7 @@ var yearout = 0
 function update_year(h) {
 	handle.attr("cx", x_t(h));
 	ye = Math.round(h);
-	document.getElementById("demo").innerHTML = ye +" --- " + yearout;
+	document.getElementById("demo").innerHTML = "Welcome to " + ye +"!"
 	
 	//SET GLOBAL VARIABLES
 	window['year'] = ye;
@@ -348,16 +361,16 @@ g.selectAll("path")
             .style("fill", "#2b8cbe");
 
 // zoom and pan
-var zoom = d3.zoom()
-    .on("zoom",function() {
-        g.attr("transform", d3.event.transform);
-        g.selectAll("circle")
-            .attr("d", path.projection(projection));
-        g.selectAll("path")  
-            .attr("d", path.projection(projection)); 
-
-  });
-svg.call(zoom)
+// var zoom = d3.zoom()
+//     .on("zoom",function() {
+//         g.attr("transform", d3.event.transform);
+//         g.selectAll("circle")
+//             .attr("d", path.projection(projection));
+//         g.selectAll("path")  
+//             .attr("d", path.projection(projection)); 
+// 
+//   });
+// svg.call(zoom)
 
 }
 
@@ -534,5 +547,4 @@ var legend = nbar.append("g")
 
 
 </script>
-
 </body>
