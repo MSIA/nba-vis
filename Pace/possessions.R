@@ -36,6 +36,14 @@ new_df = data.frame(mean = f_year$possession,
                     min = f_min$poss,
                     points = f_year$points,
                     year = f_year$Year)
+
+new_df["date"] = as.Date((paste(new_df$year,'01','01', sep = "-")))
+new_df$mean = round(new_df$mean, 2)
+new_df$max = round(new_df$max, 2)
+new_df$min = round(new_df$min, 2)
+write.csv(new_df, 'possessions.csv', row.names = F)
+
+
 df.m = melt(new_df, id.vars ="year", measure.vars = c("mean",
                                                       "max",
                                                       "min"))
