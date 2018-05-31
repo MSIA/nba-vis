@@ -27,11 +27,6 @@ var parseTime = d3.timeParse("%Y-%m-%d");
 var x = d3.scaleTime().range([0, width]);
 var y = d3.scaleLinear().range([height, 0]);
 
-// define the line
-var valueline = d3.line()
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.max); });
-
 // append the svg obgect to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
@@ -58,21 +53,34 @@ d3.csv("possessions.csv", function(error, data) {
 
   // Scale the range of the data
   x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return d.max; })]);
-
-  // Add the valueline path.
-  svg.append("path")
-      .data([data])
-      .attr("class", "line")
-      .attr("d", valueline);
+  y.domain([65, 5+d3.max(data, function(d) { return d.max; })]);
       
   // Add the scatterplot
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
       .attr("r", 5)
+      .style("fill", '#ff7366')
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.max); });
+
+  // Add the scatterplot
+  svg.selectAll("dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("r", 5)
+      .style("fill", '#94ff66')
+      .attr("cx", function(d) { return x(d.date); })
+      .attr("cy", function(d) { return y(d.mean); });
+
+  // Add the scatterplot
+  svg.selectAll("dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("r", 5)
+      .style("fill", '#66c2ff')
+      .attr("cx", function(d) { return x(d.date); })
+      .attr("cy", function(d) { return y(d.min); });
 
   // Add the X Axis
   svg.append("g")
