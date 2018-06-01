@@ -78,6 +78,13 @@ div.tooltip {
   left: 350px;
 }
 
+.ptooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+
 </style>
 
 <!-- python -m http.server 8001 -->
@@ -100,6 +107,8 @@ div.tooltip {
 <p id="demo1"></p>
 <div id="line"></div>
 <div id="map"></div>
+<div id="possplot"></div>
+<!-- <svg id="possplot"></svg> -->
 
 <!-- IMPORTS -->
 <script src="//d3js.org/d3.v4.min.js"></script>
@@ -124,6 +133,15 @@ d3.csv("./Luca-Line/data.csv")
 		.get(function(data){
 		data.forEach(function(d){d.X3PA = +d.X3PA ; d.X3P = +d.X3P; d.date = parseYear(d.Year).getFullYear()})
 		window['lucadata'] = data});
+
+possdata = 0
+d3.csv("./Pace/possessions.csv")
+	.get(function(data){
+		data.forEach(function(d){d.date = parseTime(d.date);
+      d.max = +d.max;
+      d.min = +d.min;
+      d.mean = +d.mean;})
+      window['possdata'] = data})
 		
 /////---------------------//////////
 
@@ -203,6 +221,10 @@ function update_year(h) {
 	//build_bar(ye);
 	lucaline(ye,lucadata);
 	newmapbuilder(ye,mapcsv,mapjson);
+	possplot(ye,possdata);
+
+	console.log(possdata)
+
 
   if (year <= 1985) {
     document.getElementById("demo1").innerHTML = "";
@@ -217,7 +239,7 @@ function update_year(h) {
 }
 
 ///////----------------INITIATE SVGS FOR EACH PLOT-------//////////////
-// MAP
+// **** MAP
 var mwidth = 960,
     mheight = 500;
 
@@ -233,7 +255,7 @@ var svg = d3.select("#map").append("svg")
 var path = d3.geoPath()
     .projection(projection);
 
-// LUCA LINE
+// **** LUCA LINE
 // set the dimensions and margins of the graph
 var lmargin = {top: 20, right: 20, bottom: 30, left: 50},
     lwidth = 960 - lmargin.left - lmargin.right,
@@ -265,7 +287,199 @@ var lsvg = d3.select("#line").append("svg")
     .attr("transform",
           "translate(" + lmargin.left + "," + lmargin.top + ")");
 
+
+// **** Possesions
+// Functions
+function mousemove_max(d,i) {
+    ptooltip
+        .html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
+        .style("display", "inline-block")
+        .style("left", (d3.event.pageX + 5) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+}
+
+function mousemove_min(d,i) {
+    ptooltip
+        .html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
+        .style("display", "inline-block")
+        .style("left", (d3.event.pageX + 5) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+}
+
+
+function mousemove(d,i) {
+    ptooltip
+        .html("Possesions per game: " + d.mean)
+        .style("display", "inline-block")
+        .style("left", (d3.event.pageX + 5) + "px")
+        .style("top", (d3.event.pageY - 28) + "px");
+}
+
+function mouseout(d,i) {
+    ptooltip
+        .style("display", "none");
+};
+
+
+ var ptooltip = d3.select("body").append("div").attr("class", "tooltip");
+// 
+// set the dimensions and margins of the graph
+var pmargin = {top: 20, right: 20, bottom: 30, left: 50},
+    pwidth = 960 - pmargin.left - pmargin.right,
+    pheight = 500 - pmargin.top - pmargin.bottom;
+
+// parse the date / time
+var parseTime = d3.timeParse("%Y-%m-%d");
+
+// set the ranges
+var x_poss = d3.scaleTime().range([0, pwidth]);
+var y_poss = d3.scaleLinear().range([pheight, 0]);
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var psvg = d3.select("#possplot").append("svg")
+    .attr("width", pwidth + pmargin.left + pmargin.right)
+    .attr("height", pheight + pmargin.top + pmargin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + pmargin.left + "," + pmargin.top + ")");
+
+
 /////////---------FUNCTIONS FOR CREATING & UPDATING PLOTS---------////////////
+// POSSESION PLOT FUNCTION
+function possplot(ye,data){
+
+    psvg.selectAll("g").remove();
+    psvg.selectAll("text").remove();
+
+  
+  var datafilt = data.filter(function(data) { return data.year == ye ; })
+
+  // Scale the range of the data
+  x_poss.domain(d3.extent(data, function(d) { return d.date; }));
+  y_poss.domain([65, 5+d3.max(data, function(d) { return d.max; })]);
+      
+  // Add the scatterplot
+  psvg.selectAll("dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("r", 5)
+      .style("fill", '#ff041d')
+      //.style("opacity", 0.1)
+      .style("opacity", function(d){
+      			if(parseInt(d.year) == ye){return 1}
+      			else{return .1}
+      			})
+      .attr("cx", function(d) { return x_poss(d.date); })
+      .attr("cy", function(d) { return y_poss(d.max); });
+
+  // psvg.selectAll("dot")
+//       .data(datafilt)
+//     .enter().append("circle")
+//       .attr("r", 10)
+//       .style("fill", '#ff041d')
+//       .style("opacity", 1)
+//       .attr("cx", function(d) { return x_poss(d.date); })
+//       .attr("cy", function(d) { return y_poss(d.max); })
+//       .on("mousemove",mousemove_max)
+//       .on("mouseout",mouseout);
+
+  // Add the scatterplot
+  psvg.selectAll("dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("r", 5)
+      .style("fill", '#ffd504')
+      //.style("opacity", 0.1)
+      .style("opacity", function(d){
+      			if(parseInt(d.year) == ye){return 1}
+      			else{return .1}
+      			})
+      .attr("cx", function(d) { return x_poss(d.date); })
+      .attr("cy", function(d) { return y_poss(d.mean); })
+		.on("mousemove",mousemove)
+		.on("mouseout",mouseout);
+  // psvg.selectAll("dot")
+//       .data(datafilt)
+//     .enter().append("circle")
+//       .attr("r", 10)
+//       .style("fill", '#ffd504')
+//       .style("opacity", 1)
+//       .attr("cx", function(d) { return x_poss(d.date); })
+//       .attr("cy", function(d) { return y_poss(d.mean); })
+//       .on("mousemove",mousemove)
+//       .on("mouseout",mouseout);
+
+  // Add the scatterplot
+  psvg.selectAll("dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("r", 5)
+      .style("fill", '#049bff')
+      //.style("opacity", 0.1)
+      .style("opacity", function(d){
+      			if(parseInt(d.year) == ye){return 1}
+      			else{return .1}
+      			})
+      .attr("cx", function(d) { return x_poss(d.date); })
+      .attr("cy", function(d) { return y_poss(d.min); });
+
+  // psvg.selectAll("dot")
+//       .data(datafilt)
+//     .enter().append("circle")
+//       .attr("r", 10)
+//       .style("fill", '#049bff')
+//       .style("opacity", 1)
+//       .attr("cx", function(d) { return x_poss(d.date); })
+//       .attr("cy", function(d) { return y_poss(d.min); })
+//       .on("mousemove",mousemove_min)
+//       .on("mouseout",mouseout);
+
+  // Add the X Axis
+  psvg.append("g")
+      .attr("transform", "translate(0," + pheight + ")")
+      .call(d3.axisBottom(x)
+      .tickFormat(d3.format(".4r")));
+
+  // Add the Y Axis
+  psvg.append("g")
+      .call(d3.axisLeft(y));
+
+  // Title
+  psvg.append("text")
+        .attr("x", (pwidth / 2))             
+        .attr("y", 0)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px")
+        .attr("font-weight", "bold")
+        .text("Evolution of the number of possessions per game");
+
+  var classes = d3.scaleOrdinal()
+    .domain(["Yearly maximum", "Yearly average", "Yearly minimum"])
+    .range(["#ff041d", "#ffd504", "#049bff"]);
+
+  var legend = psvg.selectAll(".legend")
+      .data(classes.domain())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(-150," + i * 20 + ")"; });
+
+  legend.append("rect")
+        .attr("x", pwidth + 10)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", classes);
+
+  legend.append("text")
+        .attr("x", pwidth + 30)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .text(function(d) { return d; });
+
+}
+
+
 //LUCA LINE FUNCTION
 function lucaline(ye,lucadata){
   
