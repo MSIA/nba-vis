@@ -59,13 +59,13 @@ empty_row = strsplit(",,,,,,,1977-01-01", ",")[[1]]
 new_df = rbind(empty_row, new_df)
 write.csv(new_df,  "possessions.csv", row.names = F)
 
-df.m = melt(new_df, id.vars ="year", measure.vars = c("mean",
-                                                      "max",
-                                                      "min"))
-ggplot(df.m, aes(year, value, color = variable)) + geom_point()
-
-df.m2 = melt(new_df, id.vars ="year", measure.vars = c("mean",
-                                                      "points"))
-df.m2$variable = as.character(df.m2$variable)
-df.m2[df.m2$variable=='mean', "variable"] = "possessions"
-ggplot(df.m2, aes(year, value, color = variable)) + geom_point()
+# df.m = melt(new_df, id.vars ="year", measure.vars = c("mean",
+#                                                       "max",
+#                                                       "min"))
+# ggplot(df.m, aes(year, value, color = variable)) + geom_point()
+# 
+# df.m2 = melt(new_df, id.vars ="year", measure.vars = c("mean",
+#                                                       "points"))
+# df.m2$variable = as.character(df.m2$variable)
+# df.m2[df.m2$variable=='mean', "variable"] = "possessions"
+# ggplot(df.m2, aes(year, value, color = variable)) + geom_point()
