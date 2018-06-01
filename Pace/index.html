@@ -90,7 +90,8 @@ d3.csv("possessions.csv", function(error, data) {
       d.mean = +d.mean;
   });
 
-  console.log(data);
+  ye = 2010
+  var datafilt = data.filter(function(d) { return d.year == ye ; })
 
   // Scale the range of the data
   x.domain(d3.extent(data, function(d) { return d.date; }));
@@ -102,6 +103,16 @@ d3.csv("possessions.csv", function(error, data) {
     .enter().append("circle")
       .attr("r", 5)
       .style("fill", '#ff7366')
+      .style("opacity", 0.1)
+      .attr("cx", function(d) { return x(d.date); })
+      .attr("cy", function(d) { return y(d.max); });
+
+  svg.selectAll("dot")
+      .data(datafilt)
+    .enter().append("circle")
+      .attr("r", 10)
+      .style("fill", '#ff7366')
+      .style("opacity", 1)
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.max); })
       .on("mousemove",mousemove_max)
@@ -113,6 +124,16 @@ d3.csv("possessions.csv", function(error, data) {
     .enter().append("circle")
       .attr("r", 5)
       .style("fill", '#94ff66')
+      .style("opacity", 0.1)
+      .attr("cx", function(d) { return x(d.date); })
+      .attr("cy", function(d) { return y(d.mean); });
+
+  svg.selectAll("dot")
+      .data(datafilt)
+    .enter().append("circle")
+      .attr("r", 10)
+      .style("fill", '#94ff66')
+      .style("opacity", 1)
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.mean); })
       .on("mousemove",mousemove)
@@ -125,6 +146,15 @@ d3.csv("possessions.csv", function(error, data) {
       .attr("r", 5)
       .style("fill", '#66c2ff')
       .style("opacity", 0.1)
+      .attr("cx", function(d) { return x(d.date); })
+      .attr("cy", function(d) { return y(d.min); });
+
+  svg.selectAll("dot")
+      .data(datafilt)
+    .enter().append("circle")
+      .attr("r", 10)
+      .style("fill", '#66c2ff')
+      .style("opacity", 1)
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.min); })
       .on("mousemove",mousemove_min)
