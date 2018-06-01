@@ -4,7 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(reshape2)
 
-dt = read.csv("../Data/team_sums_norm.csv")
+dt = read.csv("../Data/team_sums_norm.csv", stringsAsFactors = F)
 
 f = dt %>%
   filter(Year >= 1978) %>%
@@ -37,12 +37,27 @@ new_df = data.frame(mean = f_year$possession,
                     points = f_year$points,
                     year = f_year$Year)
 
+skinny = f %>%
+  select(c("Year", "Tm", "possession"))
+
+new_df <- merge(new_df, skinny,
+               by.x=c("year", "max"),
+               by.y=c("Year", "possession"))
+names(new_df)[6] = 'team_max'
+
+new_df <- merge(new_df, skinny,
+                by.x=c("year", "min"),
+                by.y=c("Year", "possession"))
+names(new_df)[7] = 'team_min'
+
 new_df["date"] = as.Date((paste(new_df$year,'01','01', sep = "-")))
 new_df$mean = round(new_df$mean, 2)
 new_df$max = round(new_df$max, 2)
 new_df$min = round(new_df$min, 2)
-write.csv(new_df, 'possessions.csv', row.names = F)
 
+empty_row = strsplit(",,,,,,,1977-01-01", ",")[[1]]
+new_df = rbind(empty_row, new_df)
+write.csv(new_df,  "possessions.csv", row.names = F)
 
 df.m = melt(new_df, id.vars ="year", measure.vars = c("mean",
                                                       "max",
