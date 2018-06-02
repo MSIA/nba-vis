@@ -2,12 +2,6 @@
 <meta charset="utf-8">
 <style> /* set the CSS */
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 2px;
-}
-
 .tooltip {
   position: absolute;
   width: 200px;
@@ -25,28 +19,34 @@
 <script>
 
 function mousemove_max(d,i) {
+  if (d.year == ye) {
     tooltip
         .html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
         .style("display", "inline-block")
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
+  }
 }
 
 function mousemove_min(d,i) {
+  if (d.year == ye) {
     tooltip
         .html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
         .style("display", "inline-block")
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
+  }
 }
 
 
 function mousemove(d,i) {
+  if (d.year == ye) {
     tooltip
         .html("Possesions per game: " + d.mean)
         .style("display", "inline-block")
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
+  }
 }
 
 function mouseout(d,i) {
@@ -57,7 +57,7 @@ function mouseout(d,i) {
 var tooltip = d3.select("body").append("div").attr("class", "tooltip");
 
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
+var margin = {top: 40, right: 100, bottom: 40, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -90,8 +90,9 @@ d3.csv("possessions.csv", function(error, data) {
       d.mean = +d.mean;
   });
 
-  ye = 2010
-  var datafilt = data.filter(function(d) { return d.year == ye ; })
+  console.log(data);
+
+  ye = 2004
 
   // Scale the range of the data
   x.domain(d3.extent(data, function(d) { return d.date; }));
@@ -101,18 +102,9 @@ d3.csv("possessions.csv", function(error, data) {
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
-      .attr("r", 5)
+      .attr("r", function(d) { return 5*(d.year != ye) + 10*(d.year == ye) })
       .style("fill", '#ff041d')
-      .style("opacity", 0.1)
-      .attr("cx", function(d) { return x(d.date); })
-      .attr("cy", function(d) { return y(d.max); });
-
-  svg.selectAll("dot")
-      .data(datafilt)
-    .enter().append("circle")
-      .attr("r", 10)
-      .style("fill", '#ff041d')
-      .style("opacity", 1)
+      .style("opacity", function(d) { return 0.1*(d.year != ye) + (d.year == ye) })
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.max); })
       .on("mousemove",mousemove_max)
@@ -122,18 +114,9 @@ d3.csv("possessions.csv", function(error, data) {
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
-      .attr("r", 5)
+      .attr("r", function(d) { return 5*(d.year != ye) + 10*(d.year == ye) })
       .style("fill", '#ffd504')
-      .style("opacity", 0.1)
-      .attr("cx", function(d) { return x(d.date); })
-      .attr("cy", function(d) { return y(d.mean); });
-
-  svg.selectAll("dot")
-      .data(datafilt)
-    .enter().append("circle")
-      .attr("r", 10)
-      .style("fill", '#ffd504')
-      .style("opacity", 1)
+      .style("opacity", function(d) { return 0.1*(d.year != ye) + (d.year == ye) })
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.mean); })
       .on("mousemove",mousemove)
@@ -143,18 +126,9 @@ d3.csv("possessions.csv", function(error, data) {
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
-      .attr("r", 5)
+      .attr("r", function(d) { return 5*(d.year != ye) + 10*(d.year == ye) })
       .style("fill", '#049bff')
-      .style("opacity", 0.1)
-      .attr("cx", function(d) { return x(d.date); })
-      .attr("cy", function(d) { return y(d.min); });
-
-  svg.selectAll("dot")
-      .data(datafilt)
-    .enter().append("circle")
-      .attr("r", 10)
-      .style("fill", '#049bff')
-      .style("opacity", 1)
+      .style("opacity", function(d) { return 0.1*(d.year != ye) + (d.year == ye) })
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.min); })
       .on("mousemove",mousemove_min)
@@ -169,14 +143,28 @@ d3.csv("possessions.csv", function(error, data) {
   svg.append("g")
       .call(d3.axisLeft(y));
 
+  // Y axis label
+  svg.append('text')
+    .attr('x', 0)
+    .attr('y', -10)
+    .attr('class', 'mylabel')
+    .text('Number of possessions');
+
+  // X axis label
+  svg.append('text')
+    .attr('x', width + 0)
+    .attr('y', height + 25)
+    .attr('class', 'mylabel')
+    .text('Year');
+
   // Title
   svg.append("text")
-        .attr("x", (width / 2))             
-        .attr("y", 0)
-        .attr("text-anchor", "middle")  
-        .style("font-size", "16px")
-        .attr("font-weight", "bold")
-        .text("Evolution of the number of possessions per game");
+    .attr("x", (width / 2))             
+    .attr("y", 0)
+    .attr("text-anchor", "middle")  
+    .style("font-size", "16px")
+    .attr("font-weight", "bold")
+    .text("Evolution of the number of possessions per game");
 
   var classes = d3.scaleOrdinal()
     .domain(["Yearly maximum", "Yearly average", "Yearly minimum"])
@@ -186,7 +174,7 @@ d3.csv("possessions.csv", function(error, data) {
       .data(classes.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(-150," + i * 20 + ")"; });
+      .attr("transform", function(d, i) { return "translate(-50," + i * 20 + ")"; });
 
   legend.append("rect")
         .attr("x", width + 10)
