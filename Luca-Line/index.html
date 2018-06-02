@@ -74,6 +74,7 @@
     .append("g")
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+
   // get the data
   d3.csv("data.csv", function(error, data) {
     if (error) throw error;
@@ -139,6 +140,47 @@
       .attr('y', height + 25)
       .attr('class', 'mylabel')
       .text('Year');
+
+
+    //legend
+    var legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', 'translate(20, 10)');
+
+    legend.append('text')
+      .attr('x', 10)
+      .attr('y', -10)
+      .text('Legend');
+
+    legend.append('path')
+      .attr('class', 'line')
+      .attr('d', 'M10,10L80,10');
+
+    legend.append('circle')
+      .attr('class', 'circle')
+      .attr('r', 3.5)
+      .attr('cx', 45)
+      .attr('cy', 10);
+
+    legend.append('text')
+      .attr('x', 85)
+      .attr('y', 15)
+      .text('3PT Attemped');
+
+    legend.append('rect')
+      .style("fill", 'lightsteelblue')
+      .attr('width',  70)
+      .attr('height', 20)
+      .attr('x', 10)
+      .attr('y', 30);
+
+    legend.append('text')
+      .attr('x', 85)
+      .attr('y', 45)
+      .text('3PT Made');
+
+    
+
 });
 </script>
 </body>
