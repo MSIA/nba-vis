@@ -51,13 +51,16 @@ d3.csv("HeightData.csv", function(error, data) {
   })
 
   x.domain(['PG','SG','SF','PF','C']);
-  y.domain(data.map(function(d) { return d.Height; }));
+  y.domain(['5'+"'"+'3'+'"','5'+"'"+'4'+'"','5'+"'"+'5'+'"','5'+"'"+'6'+'"','5'+"'"+'7'+'"','5'+"'"+'8'+'"','5'+"'"+'9'+'"',
+  	'5'+"'"+'10'+'"','5'+"'"+'11'+'"','6'+"'"+'0'+'"','6'+"'"+'1'+'"','6'+"'"+'2'+'"','6'+"'"+'3'+'"','6'+"'"+'4'+'"','6'+"'"+'5'+'"',
+  	'6'+"'"+'6'+'"','6'+"'"+'7'+'"','6'+"'"+'8'+'"','6'+"'"+'9'+'"','6'+"'"+'10'+'"','6'+"'"+'11'+'"','7'+"'"+'0'+'"','7'+"'"+'1'+'"',
+  	'7'+"'"+'2'+'"','7'+"'"+'3'+'"','7'+"'"+'4'+'"','7'+"'"+'5'+'"','7'+"'"+'6'+'"','7'+"'"+'7'+'"'])
+  //y.domain(data.map(function(d) { return d.Height; }));
 
   var xAxis = d3.axisBottom(x).ticks(5);
 
 
   var yAxis = d3.axisLeft(y);
-  console.log(y.domain);
   var data = data.filter(function(d) { return d.Year == 2017; });
 
   var groupedData = d3.nest()
@@ -92,28 +95,34 @@ d3.csv("HeightData.csv", function(error, data) {
       .style("text-anchor", "end")
       .text("Sepal Length (cm)")
 
+
 var groups = svg.selectAll(".circle")
 	.data(groupedData)
 	.enter().append("g")
-	.attr("class","circle");
-
-var circles = groups.selectAll("circle")
-	.data(groupedData)
-	.enter().append("circle")
+	.attr("class","circle")
 	.attr("cx", function(d) {
 		console.log(d.key)
-		return x(d.key);
+		return x(d.key);});
+
+var circles = groups.selectAll("circle")
+	.data(function(d) {return d.values})
+	.enter().append("circle")
+	.attr("cx", function(d) {
+		console.log(d3.select(this).node().parentNode.__data__.key)
+		return x(d3.select(this).node().parentNode.__data__.key);
 	})
 	.attr("cy", function(d,i) {
+		console.log(d)
 		console.log(i)
-		console.log(d.values[i].key)
-		return y(d.values[i].key);
+		console.log(d.key)
+		return y(d.key);
 	})
 	.attr("r", function(d,i) {
 		console.log(i)
-		console.log(d.values[i].value)
-		return d.values[i].value;
+		console.log(d.value)
+		return d.value;
 	});
+
 /*
   var legend = svg.selectAll(".legend")
       .data(color.domain())
