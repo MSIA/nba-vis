@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+path {
+  stroke: lightblue;
+  stroke-width: 0.25px;
+  fill: lightgray;
+}
+
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 175px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
+
+var itemSize = 22;
+var cellSize = itemSize - 3;
+
+var x = d3.scalePoint()
+    .range([0, width]);
+
+var y = d3.scalePoint()
+    .range([height, 0]);
+
+var r = d3.scaleLinear()
+	.range([0,50]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
+// load and display the cities
+d3.csv("HeightData.csv", function(error, data) {
+    data.forEach(function(d){
+  		d.Year = +d.Year    
+  })
+
+  var x = d3.scaleBand()
+        .domain(['PG','SG','SF','PF','C'])
+        .range([0, 5 * itemSize])
+        .paddingInner(20).paddingOuter(cellSize/2)
+
+    var xAxis = d3.axisBottom()
+        .scale(x)
+        .tickFormat(function (d) {
+            return d;
+        });
+
+    var y = d3.scaleBand()
+        .domain(['5'+"'"+'3'+'"','5'+"'"+'4'+'"','5'+"'"+'5'+'"','5'+"'"+'6'+'"','5'+"'"+'7'+'"','5'+"'"+'8'+'"','5'+"'"+'9'+'"',
+    '5'+"'"+'10'+'"','5'+"'"+'11'+'"','6'+"'"+'0'+'"','6'+"'"+'1'+'"','6'+"'"+'2'+'"','6'+"'"+'3'+'"','6'+"'"+'4'+'"','6'+"'"+'5'+'"',
+    '6'+"'"+'6'+'"','6'+"'"+'7'+'"','6'+"'"+'8'+'"','6'+"'"+'9'+'"','6'+"'"+'10'+'"','6'+"'"+'11'+'"','7'+"'"+'0'+'"','7'+"'"+'1'+'"',
+    '7'+"'"+'2'+'"','7'+"'"+'3'+'"','7'+"'"+'4'+'"','7'+"'"+'5'+'"','7'+"'"+'6'+'"','7'+"'"+'7'+'"'])
+        .range([['5'+"'"+'3'+'"','5'+"'"+'4'+'"','5'+"'"+'5'+'"','5'+"'"+'6'+'"','5'+"'"+'7'+'"','5'+"'"+'8'+'"','5'+"'"+'9'+'"',
+    '5'+"'"+'10'+'"','5'+"'"+'11'+'"','6'+"'"+'0'+'"','6'+"'"+'1'+'"','6'+"'"+'2'+'"','6'+"'"+'3'+'"','6'+"'"+'4'+'"','6'+"'"+'5'+'"',
+    '6'+"'"+'6'+'"','6'+"'"+'7'+'"','6'+"'"+'8'+'"','6'+"'"+'9'+'"','6'+"'"+'10'+'"','6'+"'"+'11'+'"','7'+"'"+'0'+'"','7'+"'"+'1'+'"',
+    '7'+"'"+'2'+'"','7'+"'"+'3'+'"','7'+"'"+'4'+'"','7'+"'"+'5'+'"','7'+"'"+'6'+'"','7'+"'"+'7'+'"'].length * itemSize,0])
+        .paddingInner(.2).paddingOuter(.2);
+
+    var yAxis = d3.axisLeft()
+        .scale(y)
+        .tickFormat(function (d) {
+            return d;
+        });
+
+  //y.domain(data.map(function(d) { return d.Height; }));
+
+  var data = data.filter(function(d) { return d.Year == 2017; });
+
+  var groupedData = d3.nest()
+  	.key(function(d) {return d.Position;})
+  	.key(function(d) {return d.Height})
+  	/*.rollup(function(hts) {
+  		return hts.length;
+  	})*/
+  	.entries(data)
+
+ console.log(groupedData)
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Sepal Width (cm)");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Sepal Length (cm)")
+
+
+var groups = svg.selectAll(".rect")
+	.data(groupedData)
+	.enter().append("g")
+	.attr("class","cell");
+
+var color = d3.scaleSequential(d3.interpolateOranges);
+                
+var colorScale2 = d3.scaleQuantize().range([0,0.2,0.4,0.6,0.8,1]);
+colorScale2.domain(d3.extent(groupedData, function (d,i) { 
+  console.log(d.values)
+  return d.values[i].values.length; }));
+
+var cells = groups.selectAll("rect")
+	.data(function(d) {return d.values})
+	.enter().append("rect")
+  .attr('width', cellSize)
+  .attr('height', cellSize)
+	.attr("x", function(d) {
+		//console.log(d3.select(this).node().parentNode.__data__.key)
+		return x(d3.select(this).node().parentNode.__data__.key);
+	})
+	.attr("y", function(d,i) {
+		//console.log(d)
+		//console.log(i)
+		//console.log(d.key)
+		return y(d.key);
+	})
+  .attr("rx",3)
+  .attr("ry",3)
+  .attr("fill", function(d,i) {
+    //console.log(d.values.length)
+    return color(colorScale2(d.values.length));
+  })
+	/*.attr("r", function(d,i) {
+		console.log(d)
+		console.log(i)
+		console.log(d.values)
+		console.log(d.values.length)
+		return d.values.length;
+	})*/
+	.on("mouseover", function(d,i) {	
+					//console.log(d.values.length)	
+                    div.transition()		
+                        .duration(200)		
+                        .style("opacity", .9);
+                    var mystring = "<b>" + d3.select(this).node().parentNode.__data__.key + ", " + d.key + "</b>";
+                    var i = 0;
+                    while (i < d.values.length) {
+                    	console.log(i)
+                    	console.log(d.values[i].Player)
+                    	mystring = mystring + "<p>" + d.values[i].Player + "</p>";
+                    	i++;
+                    };		
+                    div .html(mystring)	
+                        .style("left", (d3.event.pageX) + "px")		
+                        .style("top", (d3.event.pageY - 28) + "px");	
+                    })					
+            .on("mouseout", function(d) {		
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0)
+            });
+
+
+});
+
+</script>
