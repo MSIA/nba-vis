@@ -1,219 +1,63 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<style>
-
-.ticks {
-  font: 10px sans-serif;
-}
-
-.track,
-.track-inset,
-.track-overlay {
-  stroke-linecap: round;
-}
-
-.track {
-  stroke: #000;
-  stroke-opacity: 0.3;
-  stroke-width: 10px;
-}
-
-.track-inset {
-  stroke: #d1e5f0;
-  stroke-width: 8px;
-}
-
-.track-overlay {
-  pointer-events: stroke;
-  stroke-width: 50px;
-  stroke: transparent;
-  cursor: crosshair;
-}
-
-.handle {
-  fill: #fff;
-  stroke: #000;
-  stroke-opacity: 0.5;
-  stroke-width: 1.25px;
-}
-
-path {
-  stroke: lightblue;
-  stroke-width: 0.25px;
-  fill: lightgray;
-}
-
-body{
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-top: 1px;
-}
-
-div.tooltip {	
-    position: absolute;			
-    text-align: center;			
-    width: 175px;					
-    height: 28px;					
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: lightsteelblue;	
-    border: 0px;		
-    border-radius: 8px;			
-    pointer-events: none;			
-}
-
-p {
-    display: block;
-    margin: 4px auto;
-    padding: 0;
-    position: relative;
-    text-align: center;
-
-}
-
-h1 {
-    display: block;
-    margin: 4px;
-    padding: 0;
-    position: relative;
-    top: 0;
-    text-align: center;
-
-}
-
-#line {
-    width: 50%;
-    left: 50%;
-    margin: 0;
-    float: left;
-}
-#possplot {
-    width: 50%;
-    left: 50%;
-    margin: 0;
-    float: right;
-}
-
-
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 2px;
-}
-
-.area {
-  fill: lightsteelblue;
-}
-
-
-#demo {
-    display: block;
-    color:white;
-    font-size: 160%;
-    width: 200px;
-    margin: 0 auto;
-    padding: 0;
-    text-align: center;
-
-}
-
-#svg1 {
-    display: block;
-    position: relative;
-    margin: 0 auto;
-    padding: 0;
-}
-
-.ptooltip {
-  position: absolute;
-  width: 200px;
-  height: 28px;
-  pointer-events: none;
-}
-
-.header {
-  padding: 10px 16px;
-  background: #4393c3;
-  color: white;
-}
-
-/* Page content */
-.content {
-  padding: 5px;
-}
-
-/* The sticky class is added to the header with JS when it reaches its scroll position */
-.sticky {
-  position: fixed;
-  top: 0;
-  width: 100%
-}
-
-/* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
-.sticky + .content {
-  padding-top: 102px;
-}
-
-
-</style>
-
-<!-- python -m http.server 8001 -->
+<!-- IMPORTS -->
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="http://d3js.org/topojson.v0.min.js"></script>
+<head>
+    <link rel="stylesheet" type="text/css" href="OurStyles.css">
+</head>
  
 <body>
 
 <div class="header" id="myHeader">
   
     <head>
-        <h1
-        > Changing The Game: The NBA from 1976 to 2015 </h1> 
+        <h1> Changing The Game: The NBA from 1976 to 2015 </h1> 
     </head>
 
     <p id="demo"></p>
-    <p id="demo1"></p>
 
     <svg id="svg1" width="960" height="50"> 
     <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
             <feImage xlink:href="NBALogo.png">
-            <!--<feImage xlink:href="https://espntheundefeated.files.wordpress.com/2017/05/nba-logo.png?w=1400&quality=90&strip=info"/>-->
     </filter>
     </svg> 
-    <!-- Sample text output !-->
 </div>
 
 <div id="line"></div>
+<div id="demo1">
+    <p id="demo1"></p>
+</div>
+
+
 <div id="possplot"></div>
 <div id="map"></div>
 
-<!-- <svg id="possplot"></svg> -->
-
-<!-- IMPORTS -->
-<script src="//d3js.org/d3.v4.min.js"></script>
-<script src="http://d3js.org/topojson.v0.min.js"></script>
-
+<!--
+    STICKY HEADER SCRIPT
+    Sampled from: https://www.w3schools.com/howto/howto_js_sticky_header.asp
+-->
 <script>
-    //sticky header
-        // When the user scrolls the page, execute myFunction 
+    //sticky header -- When the user scrolls the page, execute myFunction 
     window.onscroll = function() {myFunction()};
-
     // Get the header
     var header = document.getElementById("myHeader");
-
     // Get the offset position of the navbar
     var sticky = header.offsetTop;
-
     // Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
     function myFunction() {
-    if (window.pageYOffset >= sticky) {
-        header.classList.add("sticky");
-    } else {
-        header.classList.remove("sticky");
-    }
+        if (window.pageYOffset >= sticky) {
+            header.classList.add("sticky");
+        } else {
+            header.classList.remove("sticky");
+        }
     }
 </script>
 
 <script>
 
 //////-----READ IN DATA----/////////
+// MAP DATA
 mapcsv = 0
 d3.csv("./Chris Globe/MapData.csv")
 			.get(function(data){
@@ -225,13 +69,20 @@ d3.json("./Chris Globe/world-110m2.json")
 		.get(function(data){
 			window['mapjson'] = data});
 
-var parseYear = d3.timeParse("%Y");		
+
+// LUCA LINE DATA
+var parseYear = d3.timeParse("%Y");	
 lucadata = 0
 d3.csv("./Luca-Line/data.csv")
 		.get(function(data){
-		data.forEach(function(d){d.X3PA = +d.X3PA ; d.X3P = +d.X3P; d.date = parseYear(d.Year).getFullYear()})
+		data.forEach(function(d){d.X3PA = +d.X3PA;
+                                d.X3P = +d.X3P; 
+                                d.date =parseYear(d.Year).getFullYear()})
 		window['lucadata'] = data});
 
+// POSSESION DATA
+// parse the date / time
+var parseTime = d3.timeParse("%Y-%m-%d");
 possdata = 0
 d3.csv("./Pace/possessions.csv")
 	.get(function(data){
@@ -244,12 +95,11 @@ d3.csv("./Pace/possessions.csv")
 /////---------------------//////////
 
 
-//Slider svg
+/////---SLIDER SVG------//////
 var svg = d3.select("svg"),
     tmargin = {right: 5, left: 5},
     twidth = +svg.attr("width") - tmargin.left - tmargin.right,
     theight = +svg.attr("height");
-
 
 var x_t = d3.scaleLinear()
     .domain([1976, 2017]) 
@@ -257,7 +107,6 @@ var x_t = d3.scaleLinear()
     .clamp(true);
 
 var slider = svg.append("g")
-	//.style("float","center") 
     .attr("class", "slider")
     .attr("transform", "translate(" + tmargin.left + "," + theight / 2 + ")");
 
@@ -271,7 +120,7 @@ slider.append("line")
     .attr("class", "track-overlay")
     .call(d3.drag()
         .on("start.interrupt", function() { slider.interrupt(); })
-        .on("start drag", function() { update_year(x_t.invert(d3.event.x)); }) //); 
+        .on("start drag", function() { update_year(x_t.invert(d3.event.x)); }) 
         .on("end drag", function() { update_year(x_t.invert(d3.event.x));}));  
 
 slider.insert("g", ".track-overlay")
@@ -289,6 +138,8 @@ var handle = slider.insert("circle", ".track-overlay")
     .attr("r", 25)
     .attr("filter", "url(#this_image)");
 
+
+// Add Gratuitous animated intro
 slider.transition() // Gratuitous intro!
     .duration(1500)
     .tween("hue", function() {
@@ -296,8 +147,9 @@ slider.transition() // Gratuitous intro!
       return function(t) { update_year(i(t)); };
     });
 
-///////------- SLIDER FUNCTIONS ------//////////////
+//////------- SLIDER FUNCTIONS ------////////
 //Change color on slide 
+// NEEDS WORK
 function hue(h) {
   handle.attr("cx", x_t(h));
   svg.style("background-color", d3.hsl(h, 0.8, 0.8));
@@ -321,12 +173,10 @@ function update_year(h) {
 	newmapbuilder(ye,mapcsv,mapjson);
 	possplot(ye,possdata);
 
-	//console.log(possdata)
-
-
-  if (year <= 1985) {
-    document.getElementById("demo1").innerHTML = "";
-  }
+    if (year <= 1985) {
+        //document.getElementById("demo1").innerHTML = "";
+        document.getElementById("demo1").innerHTML = "<p>With the 3rd pick in the 1984 NBA Draft, the Chicago Bulls select Michael Jordan. His rookie season is exceptional: 28.2 pts (3rd in the league), 6.5 rpg, 5.9 apg and 2.39 spg (4th in the league). He is selected as an All Star Game starter, he wins the Rookie of the Year Award and a berth on the All-NBA second team. It’s the beginning of a new era.</p> <img src='MJ23.png' style='width:85%; height:50%; margin: 7% '>"
+    }
 	
 	if (year > 1985) {
 		document.getElementById("demo1").innerHTML = yearout + " We are now entering the golden age!";
@@ -347,31 +197,50 @@ var projection = d3.geoMercator()
     .rotate([-10,0]);
 
 var svg = d3.select("#map").append("svg")
-    .attr("width", mwidth)
+    .attr("width", "100%")//mwidth)
     .attr("height", mheight);
 
 var path = d3.geoPath()
     .projection(projection);
 
-// **** LUCA LINE
+//////--------- LUCA LINE
+// FUNCTIONS
+
+function mousemove_3pt(d,i) {
+    if (d.Year >= 1980) {
+      tooltip_3pt
+          .html("3PT shots attempted: " + d3.format(".1f")(d.X3PA) +
+                "<br>3PT shots made: " + d3.format(".1f")(d.X3P) +
+                "<br>3PT shots %: " + d3.format(".1%")(d.X3P/d.X3PA))
+          .style("display", "inline-block")
+          .style("left", (d3.event.pageX - 75) + "px")
+          .style("top", (d3.event.pageY - 60) + "px");
+    }
+  }
+function mouseout_3pt(d,i) {
+    tooltip_3pt
+        .style("display", "none");
+};
+var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip_3pt");
+
 // set the dimensions and margins of the graph
-var lmargin = {top: 20, right: 20, bottom: 30, left: 50},
+var lmargin = {top: 40, right: 100, bottom: 40, left: 50},
     lwidth = screen.width-500 - lmargin.left - lmargin.right,
     lheight = 500 - lmargin.top - lmargin.bottom;
 
 // set the ranges
-var x = d3.scaleLinear().range([0, lwidth]);
+var x = d3.scaleTime().range([0, lwidth]);
 var y = d3.scaleLinear().range([lheight, 0]);
 
 // define the area
 var area = d3.area()
-    .x(function(d) { return x(d.Year); }) //Year
+    .x(function(d) { return x(d.date); }) //Year
     .y0(lheight)
     .y1(function(d) { return y(d.X3P); });
 
 // define the line
 var valueline = d3.line()
-    .x(function(d) { return x(d.Year); })
+    .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.X3PA); });
 
 // append the svg obgect to the body of the page
@@ -386,16 +255,7 @@ var lsvg = d3.select("#line").append("svg")
           "translate(" + lmargin.left + "," + lmargin.top + ")");
 
 
-  lsvg.append("text")
-        .attr("x", (lwidth / 2))             
-        .attr("y", 0)
-        .attr("text-anchor", "middle")  
-        .style("font-size", "20px")
-        .attr("font-weight", "bold")
-        .text("Number of 3-point shots Made and Attempted");
-
-
-// **** Possesions
+//////------- Possesions
 // Functions
 function mousemove_max(d,i) {
     ptooltip
@@ -404,7 +264,6 @@ function mousemove_max(d,i) {
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
 }
-
 function mousemove_min(d,i) {
     ptooltip
         .html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
@@ -412,8 +271,6 @@ function mousemove_min(d,i) {
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
 }
-
-
 function mousemove(d,i) {
     ptooltip
         .html("Possesions per game: " + d.mean)
@@ -421,22 +278,16 @@ function mousemove(d,i) {
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
 }
-
 function mouseout(d,i) {
     ptooltip
         .style("display", "none");
 };
 
-
- var ptooltip = d3.select("body").append("div").attr("class", "tooltip");
-// 
+var ptooltip = d3.select("body").append("div").attr("class", "ptooltip");
 // set the dimensions and margins of the graph
 var pmargin = {top: 20, right: 20, bottom: 30, left: 50},
     pwidth = screen.width -500- pmargin.left - pmargin.right,
     pheight = 500 - pmargin.top - pmargin.bottom;
-
-// parse the date / time
-var parseTime = d3.timeParse("%Y-%m-%d");
 
 // set the ranges
 var x_poss = d3.scaleTime().range([0, pwidth]);
@@ -454,11 +305,12 @@ var psvg = d3.select("#possplot").append("svg")
 
 
 /////////---------FUNCTIONS FOR CREATING & UPDATING PLOTS---------////////////
-// POSSESION PLOT FUNCTION
+/////------POSSESION PLOT FUNCTION
 function possplot(ye,data){
 
     psvg.selectAll("g").remove();
     psvg.selectAll("text").remove();
+    psvg.selectAll("circle").remove();
 
   
   var datafilt = data.filter(function(data) { return data.year == ye ; })
@@ -467,7 +319,7 @@ function possplot(ye,data){
   x_poss.domain(d3.extent(data, function(d) { return d.date; }));
   y_poss.domain([65, 5+d3.max(data, function(d) { return d.max; })]);
       
-  // Add the scatterplot
+  // MAXIMUM scatterplot
   psvg.selectAll("dot")
       .data(data)
     .enter().append("circle")
@@ -479,20 +331,11 @@ function possplot(ye,data){
       			else{return .1}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
-      .attr("cy", function(d) { return y_poss(d.max); });
+      .attr("cy", function(d) { return y_poss(d.max); })
+      .on("mousemove",mousemove_max)
+		.on("mouseout",mouseout);
 
-  // psvg.selectAll("dot")
-//       .data(datafilt)
-//     .enter().append("circle")
-//       .attr("r", 10)
-//       .style("fill", '#ff041d')
-//       .style("opacity", 1)
-//       .attr("cx", function(d) { return x_poss(d.date); })
-//       .attr("cy", function(d) { return y_poss(d.max); })
-//       .on("mousemove",mousemove_max)
-//       .on("mouseout",mouseout);
-
-  // Add the scatterplot
+  // AVERAGE scatterplot
   psvg.selectAll("dot")
       .data(data)
     .enter().append("circle")
@@ -507,18 +350,8 @@ function possplot(ye,data){
       .attr("cy", function(d) { return y_poss(d.mean); })
 		.on("mousemove",mousemove)
 		.on("mouseout",mouseout);
-  // psvg.selectAll("dot")
-//       .data(datafilt)
-//     .enter().append("circle")
-//       .attr("r", 10)
-//       .style("fill", '#ffd504')
-//       .style("opacity", 1)
-//       .attr("cx", function(d) { return x_poss(d.date); })
-//       .attr("cy", function(d) { return y_poss(d.mean); })
-//       .on("mousemove",mousemove)
-//       .on("mouseout",mouseout);
 
-  // Add the scatterplot
+  // MINIMUM scatterplot
   psvg.selectAll("dot")
       .data(data)
     .enter().append("circle")
@@ -530,28 +363,19 @@ function possplot(ye,data){
       			else{return .1}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
-      .attr("cy", function(d) { return y_poss(d.min); });
-
-  // psvg.selectAll("dot")
-//       .data(datafilt)
-//     .enter().append("circle")
-//       .attr("r", 10)
-//       .style("fill", '#049bff')
-//       .style("opacity", 1)
-//       .attr("cx", function(d) { return x_poss(d.date); })
-//       .attr("cy", function(d) { return y_poss(d.min); })
-//       .on("mousemove",mousemove_min)
-//       .on("mouseout",mouseout);
+      .attr("cy", function(d) { return y_poss(d.min); })
+        .on("mousemove",mousemove_min)
+		.on("mouseout",mouseout);
 
   // Add the X Axis
   psvg.append("g")
       .attr("transform", "translate(0," + pheight + ")")
-      .call(d3.axisBottom(x)
-      .tickFormat(d3.format(".4r")));
+      .call(d3.axisBottom(x_poss));
+      //.tickFormat(d3.format(".4r")));
 
   // Add the Y Axis
   psvg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y_poss));
 
   // Title
   psvg.append("text")
@@ -570,7 +394,7 @@ function possplot(ye,data){
       .data(classes.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(-150," + i * 20 + ")"; });
+      .attr("transform", function(d, i) { return "translate(-210," + i * 20 + ")"; });
 
   legend.append("rect")
         .attr("x", pwidth + 10)
@@ -584,35 +408,26 @@ function possplot(ye,data){
         .attr("dy", ".35em")
         .text(function(d) { return d; });
 
+
 }
 
-
-//LUCA LINE FUNCTION
+////---------LUCA LINE FUNCTION
 function lucaline(ye,lucadata){
-  
   sye = ""+ye;
   
   lsvg.selectAll("path").remove();
   lsvg.selectAll("line").remove();
+  lsvg.selectAll("circle").remove();
   lsvg.selectAll("g").remove();
-
   
   // find min and max for axis
-  var datamax = d3.max(lucadata, function(d){return d.Year;}) // Year
-  var datamin = d3.min(lucadata, function(d){return d.Year;})
-
-  var ymax = d3.max(lucadata, function(d){return d.X3PA;})
+    x.domain(d3.extent(lucadata, function(d) { return d.date; }));
+    y.domain([0, 2 + d3.max(lucadata, function(d) { return d.X3PA; })]);
   
   // filter out our year
   var data = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
   //var data = lucadata.filter(function(d){return d.Year <= ye;})
   
-  // scale the range of the data
-  x.domain([datamin, datamax]);
-  //x.domain(d3.extent(lucadata, function(d) { return d.date; }));
-  y.domain([0, ymax]);
-
-//console.log(ye + "----" + parseTime(sye))
   // add the area
     lsvg.append("path")
        .data([data])
@@ -625,7 +440,19 @@ function lucaline(ye,lucadata){
       .attr("class", "line")
       .attr("d", valueline);
 
-var xValues = lucadata.map(function(d){return parseFloat(d.Year);});
+    //add the dots
+    lsvg.selectAll("dot")  
+        .data(data)                   
+      .enter().append("circle")               
+        .attr("r", 3.5)
+        .attr("class", "circle")   
+        //.style("fill", "steelblue")
+        .attr("cx", function(d) { return x(d.date); })     
+        .attr("cy", function(d) { return y(d.X3PA); })
+        .on("mousemove",mousemove_3pt)
+        .on("mouseout",mouseout_3pt);
+
+    //var xValues = lucadata.map(function(d){return parseFloat(d.Year);});
   // add the X Axis
   lsvg.append("g")
       .attr("transform", "translate(0," + lheight + ")")
@@ -636,20 +463,69 @@ var xValues = lucadata.map(function(d){return parseFloat(d.Year);});
   lsvg.append("g")
       .call(d3.axisLeft(y));
 
+    // Title
+    lsvg.append("text")
+            .attr("x", (lwidth / 2))             
+            .attr("y", 0 - (lmargin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px")
+            .attr("font-weight", "bold")
+            .text("Number of 3 point shots attempted and made per game");
+
+    // X axis label
+    lsvg.append('text')
+      .attr('x', lwidth + 0)
+      .attr('y', lheight + 25)
+      .attr('class', 'mylabel')
+      .text('Year');
+
+
+    //legend
+    var legend = lsvg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', 'translate(20, 10)');
+
+    legend.append('text')
+      .attr('x', 10)
+      .attr('y', -10)
+      .text('Legend');
+
+    legend.append('path')
+      .attr('class', 'line')
+      .attr('d', 'M10,10L80,10');
+
+    legend.append('circle')
+      .attr('class', 'circle')
+      .attr('r', 3.5)
+      .attr('cx', 45)
+      .attr('cy', 10);
+
+    legend.append('text')
+      .attr('x', 85)
+      .attr('y', 15)
+      .text('3PT Attemped');
+
+    legend.append('rect')
+      .style("fill", 'lightsteelblue')
+      .attr('width',  70)
+      .attr('height', 20)
+      .attr('x', 10)
+      .attr('y', 30);
+
+    legend.append('text')
+      .attr('x', 85)
+      .attr('y', 45)
+      .text('3PT Made');
 
 }
 
 
-//NEW MAPBUILDER (NO ZOOM)
+///////-------NEW MAPBUILDER (NO ZOOM)
 function newmapbuilder(ye,mapcsv,mapjson){
-
 var g = svg.append("g");
-
 var div = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
-
-
 //Load map
 g.selectAll("path")
       .data(topojson.object(mapjson, mapjson.objects.countries)
@@ -657,8 +533,6 @@ g.selectAll("path")
     .enter()
       .append("path")
       .attr("d", path)
-
-
 
 //Load values
     //var m_data = mapcsv.filter(function(d) { return d.Year == ye; }); //year filter
@@ -703,79 +577,6 @@ var zoom = d3.zoom()
 svg.call(zoom)
 
 }
-
-
-
-//ORIGINAL MAPBUILDER
-// function mapbuilder(ye){
-
-// var g = svg.append("g");
-
-// var div = d3.select("body").append("div")	
-//     .attr("class", "tooltip")				
-//     .style("opacity", 0);
-
-// // load and display the World
-// d3.json("./Chris Globe/world-110m2.json", function(error, topology) {
-
-// // load and display the cities
-// d3.csv("./Chris Globe/MapData.csv", function(error, data) {
-//     data.forEach(function(d){
-//   		d.Year = +d.Year    
-//   })
-//     var data = data.filter(function(d) { return d.Year == ye; });
-//     g.selectAll("circle")
-//        .data(data)
-//        .enter()
-//        .append("circle")
-//             .attr("cx", function(d) {
-//                     return projection([d.Longitude, d.Latitude])[0];
-//             })
-//             .attr("cy", function(d) {
-//                     return projection([d.Longitude, d.Latitude])[1];
-//             })
-//             .on("mouseover", function(d) {		
-//                     div.transition()		
-//                         .duration(200)		
-//                         .style("opacity", .9);		
-//                     div .html(d.Player+ "<br/>"  + d.birth_city+", "+ d.birth_country)	
-//                         .style("left", (d3.event.pageX) + "px")		
-//                         .style("top", (d3.event.pageY - 28) + "px");	
-//                     })					
-//             .on("mouseout", function(d) {		
-//                 div.transition()		
-//                     .duration(500)		
-//                     .style("opacity", 0)
-//             })	
-
-//             .attr("r", 1.5)
-//             .style("fill", "#2b8cbe");
-// });
-
-
-// g.selectAll("path")
-//       .data(topojson.object(topology, topology.objects.countries)
-//           .geometries)
-//     .enter()
-//       .append("path")
-//       .attr("d", path)
-// });
-
-// // zoom and pan
-
-// var zoom = d3.zoom()
-//     .on("zoom",function() {
-//         g.attr("transform", d3.event.transform);
-//         g.selectAll("circle")
-//             .attr("d", path.projection(projection));
-//         g.selectAll("path")  
-//             .attr("d", path.projection(projection)); 
-
-//   });
-
-// svg.call(zoom)
-// }
-
 
 //UPDATE BAR (TEST)
 function build_bar(ye){

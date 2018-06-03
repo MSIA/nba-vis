@@ -1,0 +1,175 @@
+
+.ticks {
+  font: 10px sans-serif;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+  stroke-linecap: round;
+}
+
+.track {
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 10px;
+}
+
+.track-inset {
+  stroke: #d1e5f0;
+  stroke-width: 8px;
+}
+
+.track-overlay {
+  pointer-events: stroke;
+  stroke-width: 50px;
+  stroke: transparent;
+  cursor: crosshair;
+}
+
+.handle {
+  fill: #fff;
+  stroke: #000;
+  stroke-opacity: 0.5;
+  stroke-width: 1.25px;
+}
+
+path {
+  stroke: darkgray;
+  stroke-width: 0.25px;
+  fill: lightgray;
+}
+
+body{
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 1px;
+}
+
+.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 175px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: #b2182b;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;
+    color: white;			
+}
+
+.ptooltip {
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    pointer-events: none;
+    border-radius: 8px;	
+    background: #b2182b;
+    color: white;	
+    text-align:center;
+  }
+.tooltip_3pt {
+    position: absolute;
+    width: 200px;
+    height: 60px;
+    pointer-events: none;
+    background: #b2182b;
+    border-radius: 8px;	
+    text-align: center;
+    color: white;	
+ }
+p {
+    display: block;
+    margin: 4px auto;
+    padding: 0;
+    position: relative;
+    text-align: center;
+}
+
+h1 {
+    display: block;
+    margin: 4px;
+    padding: 0;
+    position: relative;
+    top: 0;
+    text-align: center;
+
+}
+
+#demo1 {
+    width: 26%;
+    left: 50%;
+    margin: 0;
+    margin-top: 5px;
+    float: left;
+}
+
+#line {
+    width: 37%;
+    left: 50%;
+    margin: 0;
+    float: left;
+}
+#possplot {
+    width: 37%;
+    left: 50%;
+    margin: 0;
+    float: right;
+}
+
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+
+.area {
+  fill: lightsteelblue;
+}
+
+.circle {
+    fill: steelblue;
+  }
+
+
+#demo {
+    display: block;
+    color:white;
+    font-size: 160%;
+    width: 200px;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+
+#svg1 {
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    padding: 0;
+}
+.header {
+  padding: 10px 16px;
+  background: #4393c3;
+  color: white;
+}
+
+/* Page content */
+.content {
+  padding: 5px;
+}
+
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+.sticky {
+  position: fixed;
+  top: 0;
+  width: 100%
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + .content {
+  padding-top: 102px;
+}
