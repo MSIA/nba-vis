@@ -29,6 +29,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+
 var x = d3.scalePoint()
     .range([0, width]);
 
@@ -44,11 +45,16 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+
 // load and display the cities
 d3.csv("HeightData.csv", function(error, data) {
     data.forEach(function(d){
   		d.Year = +d.Year    
   })
+
 
   x.domain(['PG','SG','SF','PF','C']);
   y.domain(['5'+"'"+'3'+'"','5'+"'"+'4'+'"','5'+"'"+'5'+'"','5'+"'"+'6'+'"','5'+"'"+'7'+'"','5'+"'"+'8'+'"','5'+"'"+'9'+'"',
@@ -66,9 +72,9 @@ d3.csv("HeightData.csv", function(error, data) {
   var groupedData = d3.nest()
   	.key(function(d) {return d.Position;})
   	.key(function(d) {return d.Height})
-  	.rollup(function(hts) {
+  	/*.rollup(function(hts) {
   		return hts.length;
-  	})
+  	})*/
   	.entries(data)
 
  console.log(groupedData)
@@ -99,29 +105,50 @@ d3.csv("HeightData.csv", function(error, data) {
 var groups = svg.selectAll(".circle")
 	.data(groupedData)
 	.enter().append("g")
-	.attr("class","circle")
-	.attr("cx", function(d) {
-		console.log(d.key)
-		return x(d.key);});
+	.attr("class","circle");
 
 var circles = groups.selectAll("circle")
 	.data(function(d) {return d.values})
 	.enter().append("circle")
 	.attr("cx", function(d) {
-		console.log(d3.select(this).node().parentNode.__data__.key)
+		//console.log(d3.select(this).node().parentNode.__data__.key)
 		return x(d3.select(this).node().parentNode.__data__.key);
 	})
 	.attr("cy", function(d,i) {
-		console.log(d)
-		console.log(i)
-		console.log(d.key)
+		//console.log(d)
+		//console.log(i)
+		//console.log(d.key)
 		return y(d.key);
 	})
 	.attr("r", function(d,i) {
+		console.log(d)
 		console.log(i)
-		console.log(d.value)
-		return d.value;
-	});
+		console.log(d.values)
+		console.log(d.values.length)
+		return d.values.length;
+	})
+	.on("mouseover", function(d,i) {	
+					//console.log(d.values.length)	
+                    div.transition()		
+                        .duration(200)		
+                        .style("opacity", .9);
+                    var mystring = "<b>" + d3.select(this).node().parentNode.__data__.key + ", " + d.key + "</b>";
+                    var i = 0;
+                    while (i < d.values.length) {
+                    	console.log(i)
+                    	console.log(d.values[i].Player)
+                    	mystring = mystring + "<p>" + d.values[i].Player + "</p>";
+                    	i++;
+                    };		
+                    div .html(mystring)	
+                        .style("left", (d3.event.pageX) + "px")		
+                        .style("top", (d3.event.pageY - 28) + "px");	
+                    })					
+            .on("mouseout", function(d) {		
+                div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0)
+            });
 
 /*
   var legend = svg.selectAll(".legend")
