@@ -202,23 +202,26 @@ var path = d3.geoPath()
 
 //////--------- LUCA LINE
 // FUNCTIONS
-
 function mousemove_3pt(d,i) {
     if (d.Year >= 1980) {
       tooltip_3pt
-          .html("3PT shots attempted: " + d3.format(".1f")(d.X3PA) +
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_3pt.html("3PT shots attempted: " + d3.format(".1f")(d.X3PA) +
                 "<br>3PT shots made: " + d3.format(".1f")(d.X3P) +
                 "<br>3PT shots %: " + d3.format(".1%")(d.X3P/d.X3PA))
-          .style("display", "inline-block")
-          .style("left", (d3.event.pageX - 75) + "px")
-          .style("top", (d3.event.pageY - 60) + "px");
+        .style("left", (d3.event.pageX) + "px")		
+        .style("top", (d3.event.pageY - 28) + "px");
     }
   }
 function mouseout_3pt(d,i) {
     tooltip_3pt
-        .style("display", "none");
+        .transition()		
+        .duration(500)		
+        .style("opacity", 0)
 };
-var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip_3pt");
+var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip").style("opacity",0);
 
 // set the dimensions and margins of the graph by div
 var lineDiv = document.getElementById("line");
@@ -259,33 +262,43 @@ var lsvg = d3.select("#line").append("svg")
 
 //////------- Possesions
 // Functions
+
 function mousemove_max(d,i) {
-    ptooltip
-        .html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
-        .style("display", "inline-block")
-        .style("left", (d3.event.pageX + 5) + "px")
+    tooltip_poss
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_poss.html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
+        .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");
 }
 function mousemove_min(d,i) {
-    ptooltip
-        .html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
-        .style("display", "inline-block")
-        .style("left", (d3.event.pageX + 5) + "px")
+    tooltip_poss
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_poss.html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
+        .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");
 }
 function mousemove(d,i) {
-    ptooltip
-        .html("Possesions per game: " + d.mean)
-        .style("display", "inline-block")
-        .style("left", (d3.event.pageX + 5) + "px")
+    tooltip_poss
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_poss.html("Possesions per game: " + d.mean)
+        .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");
+
 }
 function mouseout(d,i) {
-    ptooltip
-        .style("display", "none");
+    tooltip_poss
+        .transition()		
+        .duration(500)		
+        .style("opacity", 0)
 };
 
-var ptooltip = d3.select("body").append("div").attr("class", "ptooltip");
+var tooltip_poss = d3.select("body").append("div").attr("class", "tooltip").style("opacity",0);
 
 // Possession SVG
 // set the dimensions and margins of the graph
@@ -386,7 +399,7 @@ function possplot(ye,data){
         .attr("x", (pwidth / 2))             
         .attr("y", 0)
         .attr("text-anchor", "middle")  
-        .style("font-size", "20px")
+        .style("font-size", "1.2em")
         .attr("font-weight", "bold")
         .text("Number of possessions per game");
 
@@ -472,9 +485,9 @@ function lucaline(ye,lucadata){
             .attr("x", (lwidth / 2))             
             .attr("y", 0 - (lmargin.top / 2))
             .attr("text-anchor", "middle")  
-            .style("font-size", "16px")
+            .style("font-size", "1.2em")
             .attr("font-weight", "bold")
-            .text("Number of 3 point shots attempted and made per game");
+            .text("Number of 3-pt shots attempted and made per game");
 
     // X axis label
     lsvg.append('text')
@@ -526,10 +539,13 @@ function lucaline(ye,lucadata){
 
 ///////-------NEW MAPBUILDER (NO ZOOM)
 function newmapbuilder(ye,mapcsv,mapjson){
+    svg.selectAll("circle").remove();
 var g = svg.append("g");
 var div = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
+
+
 //Load map
 g.selectAll("path")
       .data(topojson.object(mapjson, mapjson.objects.countries)

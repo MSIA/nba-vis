@@ -44,43 +44,26 @@ body{
     margin-left: 0px;
     margin-right: 0px;
     margin-top: 1px;
+    /*background-color: black;*/
 }
 
 .tooltip {	
     position: absolute;			
     text-align: center;			
-    width: 175px;					
-    height: 28px;					
-    padding: 2px;				
+    /*width: 175px;					
+    height: 60px;		*/
+    width: auto;
+    height: auto;			
+    padding: 4px;				
     font: 12px sans-serif;		
     background: #b2182b;	
-    border: 0px;		
+    border: 4px;		
     border-radius: 8px;			
     pointer-events: none;
     color: white;			
 }
 
-.ptooltip {
-    position: absolute;
-    width: 200px;
-    height: 50px;
-    pointer-events: none;
-    border-radius: 8px;	
-    background: #b2182b;
-    color: white;	
-    text-align:center;
-  }
-.tooltip_3pt {
-    position: absolute;
-    width: 200px;
-    height: 60px;
-    pointer-events: none;
-    background: #b2182b;
-    border-radius: 8px;	
-    text-align: center;
-    color: white;	
- }
-p {
+p { /*This is for the year filter*/
     display: block;
     margin: 0 auto;
     padding: 0;
@@ -89,9 +72,10 @@ p {
     width: 38%;
     float: left;
     font-size: 22px;
+    opacity: 0.;
 }
 
-h1 {
+h1 {/*Overall Title changing the game*/
     display: block;
     margin: 0;
     padding: 0;
@@ -102,8 +86,9 @@ h1 {
     float: left;
     left: 0%;
     font-size: 26px;
+    opacity: 0.8;
 }
-#demo {
+#demo {/*This is for the year filter*/
   display: block;
   color:black;
   font-weight: bold;
@@ -119,6 +104,7 @@ h1 {
   margin: 0 auto;
   padding: 0;
   width: 50%;
+  opacity: 0.8;
 }
 #demo1 {
     width: 26%;
@@ -161,6 +147,7 @@ h1 {
   padding: 10px 16px;
   background: #4393c3;
   color: white;
+  opacity: 0.9;
 }
 
 /* Page content */
@@ -172,7 +159,8 @@ h1 {
 .sticky {
   position: fixed;
   top: 0;
-  width: 100%
+  width: 100%;
+  opacity: 0.5;
 }
 
 /* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
