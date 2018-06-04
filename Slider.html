@@ -25,7 +25,7 @@
 </div>
 
 <div id="line"></div>
-<div id="demo1"></div>
+<!-- <div id="demo1"></div> -->
 
 
 <div id="possplot"></div>
@@ -221,9 +221,13 @@ function mouseout_3pt(d,i) {
 };
 var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip_3pt");
 
-// set the dimensions and margins of the graph
-var lmargin = {top: 40, right: 100, bottom: 40, left: 50},
-    lwidth = screen.width-500 - lmargin.left - lmargin.right,
+// set the dimensions and margins of the graph by div
+var lineDiv = document.getElementById("line");
+
+var lmargin = {top: 40, right: 100, bottom: 40, left: 50}, 
+	lwidth = lineDiv.clientWidth - lmargin.left - lmargin.right,
+	//lheight = lineDiv.clientHeight - lmargin.top - lmargin.bottom;
+    //lwidth = screen.width-500 - lmargin.left - lmargin.right,
     lheight = 500 - lmargin.top - lmargin.bottom;
 
 // set the ranges
@@ -244,9 +248,10 @@ var valueline = d3.line()
 // append the svg obgect to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
+
 var lsvg = d3.select("#line").append("svg")
-	//.style("float","left")
-    .attr("width", "99%")//lwidth + lmargin.left + lmargin.right)
+	//.attr("width", lineDiv.clientWidth)
+    .attr("width", lwidth + lmargin.left + lmargin.right )
     .attr("height", lheight + lmargin.top + lmargin.bottom)
   .append("g")
     .attr("transform",
@@ -282,18 +287,20 @@ function mouseout(d,i) {
 };
 
 var ptooltip = d3.select("body").append("div").attr("class", "ptooltip");
+
+// Possession SVG
 // set the dimensions and margins of the graph
+var possDiv = document.getElementById("possplot");
+
 var pmargin = {top: 20, right: 20, bottom: 30, left: 50},
-    pwidth = screen.width -500- pmargin.left - pmargin.right,
+	pwidth = possDiv.clientWidth - pmargin.left - pmargin.right,
+    //pwidth = screen.width -500- pmargin.left - pmargin.right,
     pheight = 500 - pmargin.top - pmargin.bottom;
 
 // set the ranges
 var x_poss = d3.scaleTime().range([0, pwidth]);
 var y_poss = d3.scaleLinear().range([pheight, 0]);
 
-// append the svg obgect to the body of the page
-// appends a 'group' element to 'svg'
-// moves the 'group' element to the top left margin
 var psvg = d3.select("#possplot").append("svg")
     .attr("width", "99%")//pwidth + pmargin.left + pmargin.right)
     .attr("height", pheight + pmargin.top + pmargin.bottom)
@@ -392,7 +399,7 @@ function possplot(ye,data){
       .data(classes.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(-210," + i * 20 + ")"; });
+      .attr("transform", function(d, i) { return "translate(-135," + i * 20 + ")"; }); //-210
 
   legend.append("rect")
         .attr("x", pwidth + 10)
@@ -563,16 +570,16 @@ g.selectAll("path")
             .style("fill", "#2b8cbe");
 
 //zoom and pan
-var zoom = d3.zoom()
-    .on("zoom",function() {
-        g.attr("transform", d3.event.transform);
-        g.selectAll("circle")
-            .attr("d", path.projection(projection));
-        g.selectAll("path")  
-            .attr("d", path.projection(projection)); 
-
-  });
-svg.call(zoom)
+// var zoom = d3.zoom()
+//     .on("zoom",function() {
+//         g.attr("transform", d3.event.transform);
+//         g.selectAll("circle")
+//             .attr("d", path.projection(projection));
+//         g.selectAll("path")  
+//             .attr("d", path.projection(projection)); 
+// 
+//   });
+// svg.call(zoom)
 
 }
 

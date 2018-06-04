@@ -107,13 +107,14 @@ h1 {
 }
 
 #line {
-    width: 37%;
+	position: static;
+    width: 50%; /*37% */
     left: 50%;
     margin: 0;
     float: left;
 }
 #possplot {
-    width: 37%;
+    width: 50%; /*37*/
     left: 50%;
     margin: 0;
     float: right;
