@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}
+.area {
+  fill: lightsteelblue;
+}
+.circle {
+  fill: steelblue;
+}
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+
+</style>
+<body>
+
+<!-- load the d3.js library -->     
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+  function mousemove(d,i) {
+    if (d.Year >= 1980) {
+      tooltip
+          .html("3PT shots attempted: " + d3.format(".1f")(d.X3PA) +
+                "<br>3PT shots made: " + d3.format(".1f")(d.X3P) +
+                "<br>3PT shots %: " + d3.format(".1%")(d.X3P/d.X3PA))
+          .style("display", "inline-block")
+          .style("left", (d3.event.pageX - 75) + "px")
+          .style("top", (d3.event.pageY - 60) + "px");
+    }
+  }
+
+  function mouseout(d,i) {
+      tooltip
+          .style("display", "none");
+  };
+
+  var tooltip = d3.select("body").append("div").attr("class", "tooltip");
+
+  // parse the date / time    
+  var parseTime = d3.timeParse("%Y/%m/%d");
+
+  // set the dimensions and margins of the graph
+  var margin = {top: 40, right: 100, bottom: 40, left: 50},
+      width = 960 - margin.left - margin.right,
+      height = 500 - margin.top - margin.bottom;
+  // set the ranges
+  var x = d3.scaleTime().range([0, width]);
+  var y = d3.scaleLinear().range([height, 0]);
+  // define the area
+  var area = d3.area()
+      .x(function(d) { return x(d.date); })
+      .y0(height)
+      .y1(function(d) { return y(d.X3P); });
+  // define the line
+  var valueline = d3.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.X3PA); });
+  // append the svg obgect to the body of the page
+  // appends a 'group' element to 'svg'
+  // moves the 'group' element to the top left margin
+  var svg = d3.select("body").append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+  // get the data
+  d3.csv("data.csv", function(error, data) {
+    if (error) throw error;
+    // format the data
+    data.forEach(function(d) {
+        d.X3PA = +d.X3PA;
+        d.X3P = +d.X3P;
+        d.date = parseTime(d.date);
+    });
+
+    // scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.date; }));
+    y.domain([0, 2 + d3.max(data, function(d) { return d.X3PA; })]);
+
+    ye = 2017
+    data = data.filter(function(d) { return d.Year <= ye ; })
+    console.log(data)
+
+    // add the area
+      svg.append("path")
+         .data([data])
+         .attr("class", "area")
+         .attr("d", area);
+    // add the valueline path
+    svg.append("path")
+        .data([data])
+        .attr("class", "line")
+        .attr("d", valueline);
+    
+    //add the dots
+    svg.selectAll("dot")  
+        .data(data)                   
+      .enter().append("circle")               
+        .attr("r", 3.5)
+        .attr("class", "circle")   
+        //.style("fill", "steelblue")
+        .attr("cx", function(d) { return x(d.date); })     
+        .attr("cy", function(d) { return y(d.X3PA); })
+        .on("mousemove",mousemove)
+        .on("mouseout",mouseout);
+
+
+    // add the X Axis
+    svg.append("g")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+    // add the Y Axis
+    svg.append("g")
+        .call(d3.axisLeft(y));
+
+    // Title
+    svg.append("text")
+            .attr("x", (width / 2))             
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .style("font-size", "16px")
+            .attr("font-weight", "bold")
+            .text("Number of 3 point shots attempted and made per game");
+
+    // X axis label
+    svg.append('text')
+      .attr('x', width + 0)
+      .attr('y', height + 25)
+      .attr('class', 'mylabel')
+      .text('Year');
+
+
+    //legend
+    var legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', 'translate(20, 10)');
+
+    legend.append('text')
+      .attr('x', 10)
+      .attr('y', -10)
+      .text('Legend');
+
+    legend.append('path')
+      .attr('class', 'line')
+      .attr('d', 'M10,10L80,10');
+
+    legend.append('circle')
+      .attr('class', 'circle')
+      .attr('r', 3.5)
+      .attr('cx', 45)
+      .attr('cy', 10);
+
+    legend.append('text')
+      .attr('x', 85)
+      .attr('y', 15)
+      .text('3PT Attemped');
+
+    legend.append('rect')
+      .style("fill", 'lightsteelblue')
+      .attr('width',  70)
+      .attr('height', 20)
+      .attr('x', 10)
+      .attr('y', 30);
+
+    legend.append('text')
+      .attr('x', 85)
+      .attr('y', 45)
+      .text('3PT Made');
+
+    
+
+});
+</script>
+</body>
