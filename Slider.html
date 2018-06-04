@@ -12,12 +12,11 @@
 <div class="header" id="myHeader">
   
     <head>
-        <h1> Changing The Game: The NBA from 1976 to 2015 </h1> 
+        <h1> Changing The Game:<br> The NBA from 1976 to 2015</h1> 
+        <p id="demo"></p>
     </head>
 
-    <p id="demo"></p>
-
-    <svg id="svg1" width="960" height="50"> 
+    <svg id="svg1" width="600" height="50"> 
     <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
             <feImage xlink:href="NBALogo.png">
     </filter>
@@ -27,7 +26,7 @@
 <div id="line"></div>
 <!-- <div id="demo1"></div> -->
 
-
+<!---->
 <div id="possplot"></div>
 <div id="map"></div>
 
@@ -159,7 +158,7 @@ var yearout = 0
 function update_year(h) {
 	handle.attr("cx", x_t(h));
 	ye = Math.round(h);
-	document.getElementById("demo").innerHTML = "Filtered Year: " + ye +""
+	document.getElementById("demo").innerHTML =  ye 
 	
 	//SET GLOBAL VARIABLES
 	window['year'] = ye;

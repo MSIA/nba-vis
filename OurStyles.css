@@ -82,22 +82,44 @@ body{
  }
 p {
     display: block;
-    margin: 4px auto;
+    margin: 0 auto;
     padding: 0;
     position: relative;
     text-align: center;
+    width: 38%;
+    float: left;
+    font-size: 22px;
 }
 
 h1 {
     display: block;
-    margin: 4px;
+    margin: 0;
     padding: 0;
     position: relative;
     top: 0;
     text-align: center;
-
+    width: 30%;
+    float: left;
+    left: 0%;
+    font-size: 26px;
 }
-
+#demo {
+  display: block;
+  color:black;
+  font-weight: bold;
+  font-size: 40px;
+  width: 200px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+#svg1 {
+  display: block;
+  position: relative;
+  margin: 0 auto;
+  padding: 0;
+  width: 50%;
+}
 #demo1 {
     width: 26%;
     left: 50%;
@@ -135,23 +157,6 @@ h1 {
     fill: steelblue;
   }
 
-
-#demo {
-    display: block;
-    color:white;
-    font-size: 160%;
-    width: 200px;
-    margin: 0 auto;
-    padding: 0;
-    text-align: center;
-}
-
-#svg1 {
-    display: block;
-    position: relative;
-    margin: 0 auto;
-    padding: 0;
-}
 .header {
   padding: 10px 16px;
   background: #4393c3;
