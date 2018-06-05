@@ -26,7 +26,10 @@
 <div id="line"></div>
 <!-- <div id="demo1"></div> -->
 
+
 <div id="hplot"></div>
+<div id="infographics"></div>
+
 <div id="possplot"></div>
 <div id="map"></div>
 
@@ -96,6 +99,14 @@ d3.csv("./Joe-Heights/HeightData.csv")
 		data.forEach(function(d){d.Year = +d.Year})
 		window['hdata'] = data});
 		
+
+var infoData = 0
+d3.csv("../Data/black.csv")
+    .get(function(data){
+        data.forEach(function(d){
+                d.Year = +d.Year
+                d.ImagePath =d.ImagePath})
+        window['infoData'] =data});
 /////---------------------//////////
 
 
@@ -177,6 +188,7 @@ function update_year(h) {
 	newmapbuilder(ye,mapcsv,mapjson);
 	possplot(ye,possdata);
 	heightplot(ye,hdata);
+    change_info(ye, infoData)
 
 
 }
@@ -352,6 +364,21 @@ var h_div = d3.select("#hplot").append("div")
     .attr("class", "tooltip")				
     .style("opacity", 0);
 
+
+// INFOGRAPHICS
+var info_div = document.getElementById("infographics");
+var inf_margin = {top: 20, right: 10, bottom: 30, left: 10},
+    inf_width = info_div.clientWidth - inf_margin.left - inf_margin.right,
+    inf_height = info_div.clientHeight - inf_margin.top - inf_margin.bottom;
+
+var info_svg = d3.select("#infographics").append("svg")
+    .attr("width", inf_width + inf_margin.left + inf_margin.right)
+    .attr("height", inf_height + inf_margin.top + inf_margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + inf_margin.left + "," + inf_margin.top + ")");
+
+
+
 /////////---------FUNCTIONS FOR CREATING & UPDATING PLOTS---------////////////
 /////------JOE HEIGHT PLOT
 function heightplot(ye,hdata){
@@ -468,7 +495,6 @@ var circles = groups.selectAll("circle")
 
 
 }
-
 
 /////------POSSESION PLOT FUNCTION
 function possplot(ye,data){
@@ -590,28 +616,44 @@ function lucaline(ye,lucadata){
     y.domain([0, 2 + d3.max(lucadata, function(d) { return d.X3PA; })]);
   
   // filter out our year
-  var data = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
+  var data_filt = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
   //var data = lucadata.filter(function(d){return d.Year <= ye;})
   
   // add the area
     lsvg.append("path")
-       .data([data])
+       .data([lucadata])
+       .style("opacity", 0.2)
        .attr("class", "area")
        .attr("d", area);
 
   // add the valueline path.
   lsvg.append("path")
-      .data([data])
+      .data([lucadata])
+      .style("opacity", 0.2)
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // add the area
+    lsvg.append("path")
+       .data([data_filt])
+       .style("opacity", 1)
+       .attr("class", "area")
+       .attr("d", area);
+
+  // add the valueline path.
+  lsvg.append("path")
+      .data([data_filt])
+      .style("opacity", 1)
       .attr("class", "line")
       .attr("d", valueline);
 
     //add the dots
     lsvg.selectAll("dot")  
-        .data(data)                   
+        .data(lucadata)                   
       .enter().append("circle")               
         .attr("r", 3.5)
         .attr("class", "circle")   
-        //.style("fill", "steelblue")
+        .style("opacity", function(d) { return 0.2*(d.Year > ye) + (d.Year <= ye) })
         .attr("cx", function(d) { return x(d.date); })     
         .attr("cy", function(d) { return y(d.X3PA); })
         .on("mousemove",mousemove_3pt)
@@ -684,7 +726,6 @@ function lucaline(ye,lucadata){
 
 }
 
-
 ///////-------NEW MAPBUILDER (NO ZOOM)
 function newmapbuilder(ye,mapcsv,mapjson){
     svg.selectAll("circle").remove();
@@ -743,6 +784,17 @@ g.selectAll("path")
 // 
 //   });
 // svg.call(zoom)
+
+}
+
+function change_info(ye, data){
+    year = ye
+        var data = data.filter(function(d) { return d.Year == year; });
+        var path = data.map(function(d) {return d.ImagePath; });
+        console.log(path)
+        info_svg.append("svg:image")
+            .attr("xlink:href", path)//"infographics/Slide11.jpg")
+            .attr("class", "infopic")
 
 }
 
