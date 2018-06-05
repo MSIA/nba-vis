@@ -101,7 +101,7 @@ d3.csv("./Joe-Heights/HeightData.csv")
 		
 
 var infoData = 0
-d3.csv("../Data/black.csv")
+d3.csv("../Data/white.csv")
     .get(function(data){
         data.forEach(function(d){
                 d.Year = +d.Year
@@ -783,11 +783,20 @@ function lucaline(ye,lucadata){
 
 ///////-------NEW MAPBUILDER (NO ZOOM)
 function newmapbuilder(ye,mapcsv,mapjson){
+    // Title
     svg.selectAll("circle").remove();
-var g = svg.append("g");
-var div = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
+
+    var g = svg.append("g");
+    var div = d3.select("body").append("div")	
+        .attr("class", "tooltip")				
+        .style("opacity", 0);
+
+    svg.append("text")
+    .attr("x", (mwidth / 2))             
+    .attr("y", 40)
+    .attr("text-anchor", "middle")  
+    .attr("class","pltTitle")
+    .text("Player Birth Place");
 
 
 //Load map
@@ -844,12 +853,13 @@ g.selectAll("path")
 
 function change_info(ye, data){
     year = ye
-        var data = data.filter(function(d) { return d.Year == year; });
-        var path = data.map(function(d) {return d.ImagePath; });
-        console.log(path)
-        info_svg.append("svg:image")
-            .attr("xlink:href", path)//"infographics/Slide11.jpg")
-            .attr("class", "infopic")
+    var data = data.filter(function(d) { return d.Year == year; });
+    //console.log(data);
+    var path = data.map(function(d) {return d.ImagePath; });
+    console.log(path)
+    info_svg.append("svg:image")
+        .attr("xlink:href", path)//"infographics/Slide11.jpg")
+        .attr("class", "infopic")
 
 }
 
