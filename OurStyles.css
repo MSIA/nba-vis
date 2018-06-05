@@ -120,27 +120,42 @@ h1 {/*Overall Title changing the game*/
 
 #line {
 	position: static;
-    width: 48%; /*37% */
-    height: 500px;
+    width: 40%; /*37% */
+    height: 250px;
     left: 50%;
     margin: 0;
     float: left;
 }
 #possplot {
-    width: 50%; /*37*/
-    height: 500px;
+  position: static;
+    width: 40%; /*37*/
+    height: 250px;
     left: 50%;
     margin: 0;
-    float: right;
+    float: left;
 }
 #hplot {
-  width: 48%; /*37*/
+  position: static;
+  width: 30%; /*37*/
   height: 500px;
   left: 50%;
   margin: 0;
   float: right;
 }
 
+#infographics {
+  position: static;
+  width: 30%; /*37*/
+  height: 400px;
+  margin: 0;
+  left: 60%;
+  float: right;
+}
+
+.infopic {
+  width: 100%;
+  height: 100%;
+}
 
 .line {
   fill: none;
