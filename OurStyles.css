@@ -75,6 +75,10 @@ p { /*This is for the year filter*/
     opacity: 0.;
 }
 
+h2 {
+  font: 12px sans-serif;
+}
+
 h1 {/*Overall Title changing the game*/
     display: block;
     margin: 0;
@@ -116,16 +120,25 @@ h1 {/*Overall Title changing the game*/
 
 #line {
 	position: static;
-    width: 50%; /*37% */
+    width: 48%; /*37% */
+    height: 500px;
     left: 50%;
     margin: 0;
     float: left;
 }
 #possplot {
     width: 50%; /*37*/
+    height: 500px;
     left: 50%;
     margin: 0;
     float: right;
+}
+#hplot {
+  width: 48%; /*37*/
+  height: 500px;
+  left: 50%;
+  margin: 0;
+  float: right;
 }
 
 

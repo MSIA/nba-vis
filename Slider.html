@@ -226,9 +226,9 @@ var lineDiv = document.getElementById("line");
 
 var lmargin = {top: 40, right: 100, bottom: 40, left: 50}, 
 	lwidth = lineDiv.clientWidth - lmargin.left - lmargin.right,
-	//lheight = lineDiv.clientHeight - lmargin.top - lmargin.bottom;
+	lheight = lineDiv.clientHeight - lmargin.top - lmargin.bottom;
     //lwidth = screen.width-500 - lmargin.left - lmargin.right,
-    lheight = 500 - lmargin.top - lmargin.bottom;
+    //lheight = 500 - lmargin.top - lmargin.bottom;
 
 // set the ranges
 var x = d3.scaleTime().range([0, lwidth]);
@@ -304,8 +304,7 @@ var possDiv = document.getElementById("possplot");
 
 var pmargin = {top: 20, right: 20, bottom: 30, left: 50},
 	pwidth = possDiv.clientWidth - pmargin.left - pmargin.right,
-    //pwidth = screen.width -500- pmargin.left - pmargin.right,
-    pheight = 500 - pmargin.top - pmargin.bottom;
+    pheight = possDiv.clientHeight - pmargin.top - pmargin.bottom;
 
 // set the ranges
 var x_poss = d3.scaleTime().range([0, pwidth]);
@@ -319,10 +318,11 @@ var psvg = d3.select("#possplot").append("svg")
           "translate(" + pmargin.left + "," + pmargin.top + ")");
 
 // JOE HEIGHT SVG
+var heightDiv = document.getElementById("hplot");
 
 var h_margin = {top: 20, right: 20, bottom: 30, left: 40},
-    h_width = 500 - h_margin.left - h_margin.right,
-    h_height = 500 - h_margin.top - h_margin.bottom;
+    h_width = heightDiv.clientWidth - h_margin.left - h_margin.right,
+    h_height = heightDiv.clientHeight - h_margin.top - h_margin.bottom;
 
 var x_jh = d3.scaleBand()
         .domain(['PG','SG','SF','PF','C'])
@@ -349,7 +349,7 @@ var h_svg = d3.select("#hplot").append("svg")
     .attr("transform", "translate(" + h_margin.left + "," + h_margin.top + ")");
 
 var h_div = d3.select("#hplot").append("div")	
-    .attr("class", "h_tooltip")				
+    .attr("class", "tooltip")				
     .style("opacity", 0);
 
 /////////---------FUNCTIONS FOR CREATING & UPDATING PLOTS---------////////////
@@ -375,9 +375,6 @@ function heightplot(ye,hdata){
   		return hts.length;
   	})*/
   	.entries(h_dataf)
-
- console.log(groupedData); console.log(ye);
-
 
   h_svg.append("g")
       .attr("class", "x axis")
@@ -454,12 +451,13 @@ var circles = groups.selectAll("circle")
                     while (i < d.values.length) {
                     	// console.log(i)
 //                     	console.log(d.values[i].Player)
-                    	mystring = mystring + "<p>" + d.values[i].Player + "</p>";
+                    	mystring = mystring + "<h2>" + d.values[i].Player + "</h2>";
                     	i++;
                     };		
                     h_div .html(mystring)	
                         .style("left", (d3.event.pageX) + "px")		
-                        .style("top", (d3.event.pageY - 28) + "px");	
+                        .style("top", (d3.event.pageY - 28) + "px");
+                        	
                     })					
             .on("mouseout", function(d) {		
                 h_div.transition()		
