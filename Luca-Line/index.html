@@ -91,6 +91,7 @@
 
     ye = 2000
     data_filt = data.filter(function(d) { return d.Year <= ye ; })
+    data_dots = data.filter(function(d) { return d.Year >= 1980 ; })
     console.log(data)
 
     // add the area
@@ -121,7 +122,7 @@
     
     //add the dots
     svg.selectAll("dot")  
-        .data(data)                   
+        .data(data_dots)                   
       .enter().append("circle")               
         .attr("r", 3.5)
         .attr("class", "circle")  
