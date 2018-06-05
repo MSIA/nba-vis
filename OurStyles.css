@@ -123,12 +123,19 @@ h1 {/*Overall Title changing the game*/
   text-align: center;
   font-family: Impact, Charcoal, sans-serif;
 }
+#animate {/*Play */
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  width: 10%;
+  opacity: 0.8;
+}
 #svg1 {
   display: block;
   position: relative;
   margin: 0 auto;
   padding: 0;
-  width: 50%;
+  width: 40%;
   opacity: 0.8;
 }
 #demo1 {
