@@ -203,9 +203,10 @@ var projection = d3.geoMercator()
     .scale(150)
     .rotate([-10,0]);
 
+var mapDiv = document.getElementById("map");
 var svg = d3.select("#map").append("svg")
-    .attr("width", "100%")//mwidth)
-    .attr("height", mheight);
+    .attr("width", mapDiv.clientWidth)//mwidth)
+    .attr("height", mapDiv.clientHeight);
 
 var path = d3.geoPath()
     .projection(projection);
@@ -236,7 +237,7 @@ var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip").style
 // set the dimensions and margins of the graph by div
 var lineDiv = document.getElementById("line");
 
-var lmargin = {top: 40, right: 100, bottom: 40, left: 50}, 
+var lmargin = {top: 40, right: 20, bottom: 40, left: 50}, 
 	lwidth = lineDiv.clientWidth - lmargin.left - lmargin.right,
 	lheight = lineDiv.clientHeight - lmargin.top - lmargin.bottom;
     //lwidth = screen.width-500 - lmargin.left - lmargin.right,
@@ -314,7 +315,7 @@ var tooltip_poss = d3.select("body").append("div").attr("class", "tooltip").styl
 // set the dimensions and margins of the graph
 var possDiv = document.getElementById("possplot");
 
-var pmargin = {top: 20, right: 20, bottom: 30, left: 50},
+var pmargin = {top: 20, right: 20, bottom: 40, left: 50},
 	pwidth = possDiv.clientWidth - pmargin.left - pmargin.right,
     pheight = possDiv.clientHeight - pmargin.top - pmargin.bottom;
 
@@ -332,7 +333,7 @@ var psvg = d3.select("#possplot").append("svg")
 // JOE HEIGHT SVG
 var heightDiv = document.getElementById("hplot");
 
-var h_margin = {top: 20, right: 20, bottom: 30, left: 40},
+var h_margin = {top: 50, right: 20, bottom: 40, left: 50},
     h_width = heightDiv.clientWidth - h_margin.left - h_margin.right,
     h_height = heightDiv.clientHeight - h_margin.top - h_margin.bottom;
 
@@ -385,6 +386,7 @@ function heightplot(ye,hdata){
 
   h_svg.selectAll("circle").remove();
   h_svg.selectAll("g").remove();
+  h_svg.selectAll("text").remove();
 
 
   y_jh.domain(['5'+"'"+'3'+'"','5'+"'"+'4'+'"','5'+"'"+'5'+'"','5'+"'"+'6'+'"','5'+"'"+'7'+'"','5'+"'"+'8'+'"','5'+"'"+'9'+'"',
@@ -442,6 +444,30 @@ function heightplot(ye,hdata){
           .text("Height");
           */
 
+   // Title
+   h_svg.append("text")
+            .attr("x", (h_width / 2))             
+            .attr("y", 0 - (h_margin.top / 2))
+            .attr("text-anchor", "middle")  
+            .attr("class","pltTitle")
+            .text("Height by Position");
+
+   // X axis label
+   h_svg.append('text')
+      .attr('x', h_width/2 + 0)
+      .attr('y', h_height + 35)
+      .attr('class', 'mylabel')
+      .attr("text-anchor","middle")
+      .text('Position');
+
+    // Y axis label
+    h_svg.append('text')
+      .attr('class', 'mylabel')
+      .attr("text-anchor","middle")
+      .attr("transform","rotate(-90)")
+      .attr("y",-30)
+      .attr("x", -h_height/2)
+      .text('Height');
 
 var groups = h_svg.selectAll(".circle")
 	.data(groupedData)
@@ -563,6 +589,23 @@ function possplot(ye,data){
       .attr("transform", "translate(0," + pheight + ")")
       .call(d3.axisBottom(x_poss));
       //.tickFormat(d3.format(".4r")));
+    // X axis label
+    psvg.append('text')
+            .attr('x', pwidth/2 + 0)
+            .attr('y', pheight + 35)
+            .attr('class', 'mylabel')
+            .attr("text-anchor","middle")
+            .text('Year');
+
+    // Y axis label
+    psvg.append('text')
+      .attr('class', 'mylabel')
+      .attr("text-anchor","middle")
+      .attr("transform","rotate(-90)")
+      .attr("y",-30)
+      .attr("x", -pheight/2)
+      .text('3 Point Shots');
+
 
   // Add the Y Axis
   psvg.append("g")
@@ -573,8 +616,7 @@ function possplot(ye,data){
         .attr("x", (pwidth / 2))             
         .attr("y", 0)
         .attr("text-anchor", "middle")  
-        .style("font-size", "1.2em")
-        .attr("font-weight", "bold")
+        .attr("class","pltTitle")
         .text("Number of possessions per game");
 
   var classes = d3.scaleOrdinal()
@@ -585,18 +627,21 @@ function possplot(ye,data){
       .data(classes.domain())
     .enter().append("g")
       .attr("class", "legend")
-      .attr("transform", function(d, i) { return "translate(-135," + i * 20 + ")"; }); //-210
+      .attr("transform", function(d, i) { return "translate(-135," + i * 15 + ")"; }); //-210
 
   legend.append("rect")
-        .attr("x", pwidth + 10)
-        .attr("width", 18)
-        .attr("height", 18)
+        .attr("x", pwidth + 5)
+        .attr("y", 9 )
+        .attr("dy", ".5em")
+        .attr("width", 10)
+        .attr("height", 10)
         .style("fill", classes);
 
   legend.append("text")
         .attr("x", pwidth + 30)
         .attr("y", 9)
-        .attr("dy", ".35em")
+        .attr("dy", ".5em")
+        .attr("font-size","12px")
         .text(function(d) { return d; });
 
 
@@ -610,6 +655,7 @@ function lucaline(ye,lucadata){
   lsvg.selectAll("line").remove();
   lsvg.selectAll("circle").remove();
   lsvg.selectAll("g").remove();
+  lsvg.selectAll("text").remove();
   
   // find min and max for axis
     x.domain(d3.extent(lucadata, function(d) { return d.date; }));
@@ -675,16 +721,25 @@ function lucaline(ye,lucadata){
             .attr("x", (lwidth / 2))             
             .attr("y", 0 - (lmargin.top / 2))
             .attr("text-anchor", "middle")  
-            .style("font-size", "1.2em")
-            .attr("font-weight", "bold")
+            .attr("class","pltTitle")
             .text("Number of 3-pt shots attempted and made per game");
 
     // X axis label
     lsvg.append('text')
-      .attr('x', lwidth + 0)
-      .attr('y', lheight + 25)
+      .attr('x', lwidth/2 + 0)
+      .attr('y', lheight + 35)
       .attr('class', 'mylabel')
+      .attr("text-anchor","middle")
       .text('Year');
+
+    // Y axis label
+    lsvg.append('text')
+      .attr('class', 'mylabel')
+      .attr("text-anchor","middle")
+      .attr("transform","rotate(-90)")
+      .attr("y",-30)
+      .attr("x", -lheight/2)
+      .text('3 Point Shots');
 
 
     //legend
@@ -692,10 +747,6 @@ function lucaline(ye,lucadata){
       .attr('class', 'legend')
       .attr('transform', 'translate(20, 10)');
 
-    legend.append('text')
-      .attr('x', 10)
-      .attr('y', -10)
-      .text('Legend');
 
     legend.append('path')
       .attr('class', 'line')
@@ -710,18 +761,22 @@ function lucaline(ye,lucadata){
     legend.append('text')
       .attr('x', 85)
       .attr('y', 15)
+      .attr("font-size","12px")
+      .attr("font-family", "Trebuchet MS, Helvetica, sans-serif")
       .text('3PT Attemped');
 
     legend.append('rect')
       .style("fill", 'lightsteelblue')
       .attr('width',  70)
-      .attr('height', 20)
+      .attr('height', 10)
       .attr('x', 10)
-      .attr('y', 30);
+      .attr('y', 25);
 
     legend.append('text')
       .attr('x', 85)
-      .attr('y', 45)
+      .attr('y', 35)
+      .attr("font-size","12px")
+      .attr("font-family", "Trebuchet MS, Helvetica, sans-serif")
       .text('3PT Made');
 
 }
@@ -797,102 +852,6 @@ function change_info(ye, data){
             .attr("class", "infopic")
 
 }
-
-//UPDATE BAR (TEST)
-function build_bar(ye){
-year = ye
-nbar.selectAll(".bar").remove();
-nbar.selectAll("text").remove();
-nbar.selectAll("g").remove();
-        
-d3.csv("../Data/team_means.csv", function(error, data) {
-  if(error) throw error;
-
-  data.forEach(function(d){
-  		d.Year = +d.Year
-    	d.height = +d.height
-    	d.Age = +d.Age
-    	d.Age = Math.round(d.Age)
-    
-  })
-  
-  //Filter data based on slider year
-  var data = data.filter(function(d) { return d.Year == window['year']; });
-	//console.log(data)
-  
-    data.sort(function(a, b) {
-        return d3.ascending(a.height, b.height)
-      });
-  
-  // Scale the range of the data in the domains
-  x.domain([0, d3.max(data, function(d){ return d.height; })])
-  y.domain(data.map(function(d) { return d.Tm; }));
-  
-
-  //append the rectangles for the bar chart
-  nbar.selectAll(".bar")
-      .data(data)
-    .enter().append("rect")
-      .attr("class", "bar")
-      .attr("width", function(d) {return x(d.height); } )
-      .attr("y", function(d) { return y(d.Tm); })
-      .attr("height", y.bandwidth())
-      .attr("fill", function(d) { return z(Math.round(d["Age"])); }); 
-      
-
-  // add the x Axis
-  nbar.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
-
-  nbar.append("text")             
-      .attr("transform",
-            "translate(" + (width/2) + " ," + 
-                           (height + margin.top - 5) + ")")
-      .style("text-anchor", "middle")
-      .text("Height (cm)");
-
-  nbar.append("text")
-  	  .attr("transform",
-            "translate(" + (width/2) + " ," + 
-                           (-10) + ")")
-      .style("text-anchor", "middle")
-      .text("NBA Teams by Height in "+year);
-
-  // add the y Axis
-  nbar.append("g")
-      .call(d3.axisLeft(y));
-      
-// Add Legend
-var legend = nbar.append("g")
-      .attr("font-family", "sans-serif")
-      .attr("font-size", 10)
-      .attr("text-anchor", "end")
-    .selectAll("g")
-    .data(d3.map(data.sort(function(a, b) {
-        return d3.ascending(a.Age, b.Age)
-      })
-      , function(d){return d["Age"];}).keys())
-    .enter().append("g")
-      .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-  legend.append("rect")
-      .attr("x", width + 50) //19
-      .attr("width", 19)
-      .attr("height", 19)
-      .attr("fill", z);
-
-  legend.append("text")
-      .attr("x", width + 50 - 5) 
-      .attr("y", 9.5)
-      .attr("dy", "0.32em")
-      .text(function(d) { return d+" yrs"; });
-
-
-      
-});
-
-} //function close
 
 
 </script>

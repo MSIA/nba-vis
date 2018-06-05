@@ -101,6 +101,7 @@ h1 {/*Overall Title changing the game*/
   margin: 0 auto;
   padding: 0;
   text-align: center;
+  font-family: Impact, Charcoal, sans-serif;
 }
 #svg1 {
   display: block;
@@ -150,6 +151,26 @@ h1 {/*Overall Title changing the game*/
   margin: 0;
   left: 60%;
   float: right;
+}
+
+#map {
+  width: 80%; /*37*/
+  height: 500px;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 1%;
+  float: left;
+}
+
+.mylabel{
+  font-size: 12px;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+.pltTitle{
+  font-size: 1.2em;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  /*font-weight: bold;*/
 }
 
 .infopic {
