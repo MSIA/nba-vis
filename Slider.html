@@ -616,28 +616,44 @@ function lucaline(ye,lucadata){
     y.domain([0, 2 + d3.max(lucadata, function(d) { return d.X3PA; })]);
   
   // filter out our year
-  var data = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
+  var data_filt = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
   //var data = lucadata.filter(function(d){return d.Year <= ye;})
   
   // add the area
     lsvg.append("path")
-       .data([data])
+       .data([lucadata])
+       .style("opacity", 0.2)
        .attr("class", "area")
        .attr("d", area);
 
   // add the valueline path.
   lsvg.append("path")
-      .data([data])
+      .data([lucadata])
+      .style("opacity", 0.2)
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // add the area
+    lsvg.append("path")
+       .data([data_filt])
+       .style("opacity", 1)
+       .attr("class", "area")
+       .attr("d", area);
+
+  // add the valueline path.
+  lsvg.append("path")
+      .data([data_filt])
+      .style("opacity", 1)
       .attr("class", "line")
       .attr("d", valueline);
 
     //add the dots
     lsvg.selectAll("dot")  
-        .data(data)                   
+        .data(lucadata)                   
       .enter().append("circle")               
         .attr("r", 3.5)
         .attr("class", "circle")   
-        //.style("fill", "steelblue")
+        .style("opacity", function(d) { return 0.2*(d.Year > ye) + (d.Year <= ye) })
         .attr("cx", function(d) { return x(d.date); })     
         .attr("cy", function(d) { return y(d.X3PA); })
         .on("mousemove",mousemove_3pt)
