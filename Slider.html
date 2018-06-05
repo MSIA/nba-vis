@@ -31,7 +31,9 @@
 <div id="infographics"></div>
 
 <div id="possplot"></div>
-<div id="map"></div>
+<div class="mapper" id="map">
+    <h3>Player Birth Place</h3>
+</div>
 
 <!--
     STICKY HEADER SCRIPT
@@ -101,7 +103,7 @@ d3.csv("./Joe-Heights/HeightData.csv")
 		
 
 var infoData = 0
-d3.csv("../Data/white.csv")
+d3.csv("../Data/black.csv")
     .get(function(data){
         data.forEach(function(d){
                 d.Year = +d.Year
@@ -145,6 +147,7 @@ slider.insert("g", ".track-overlay")
   .data(x_t.ticks(11))
   .enter().append("text")
     .attr("x", x_t)
+    .attr("fill","white")
     .attr("text-anchor", "middle")
     .text(function(d) { return d ; });
 
@@ -406,7 +409,7 @@ function heightplot(ye,hdata){
   	.entries(h_dataf)
 
   h_svg.append("g")
-      .attr("class", "x axis")
+      .attr("class", "axisWhite")
       .attr("transform", "translate(0," + h_height + ")")
       .call(xAxis)
     .append("text")
@@ -418,7 +421,7 @@ function heightplot(ye,hdata){
       .text("Position");
 
   h_svg.append("g")
-      .attr("class", "y axis")
+      .attr("class", "axisWhite")
       .call(yAxis)
     .append("text")
       .attr("class", "label")
@@ -472,7 +475,7 @@ function heightplot(ye,hdata){
 var groups = h_svg.selectAll(".circle")
 	.data(groupedData)
 	.enter().append("g")
-	.attr("class","circle");
+	.attr("class","circleJoe");
 
 var circles = groups.selectAll("circle")
 	.data(function(d) {return d.values})
@@ -541,11 +544,11 @@ function possplot(ye,data){
       .data(data)
     .enter().append("circle")
       .attr("r", 5)
-      .style("fill", '#ff041d')
+      .style("fill", '#0069BA')
       //.style("opacity", 0.1)
       .style("opacity", function(d){
       			if(parseInt(d.year) == ye){return 1}
-      			else{return .1}
+      			else{return .25}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
       .attr("cy", function(d) { return y_poss(d.max); })
@@ -557,11 +560,11 @@ function possplot(ye,data){
       .data(data)
     .enter().append("circle")
       .attr("r", 5)
-      .style("fill", '#ffd504')
+      .style("fill", 'white')
       //.style("opacity", 0.1)
       .style("opacity", function(d){
       			if(parseInt(d.year) == ye){return 1}
-      			else{return .1}
+      			else{return .25}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
       .attr("cy", function(d) { return y_poss(d.mean); })
@@ -573,11 +576,11 @@ function possplot(ye,data){
       .data(data)
     .enter().append("circle")
       .attr("r", 5)
-      .style("fill", '#049bff')
+      .style("fill", '#F00B46')
       //.style("opacity", 0.1)
       .style("opacity", function(d){
       			if(parseInt(d.year) == ye){return 1}
-      			else{return .1}
+      			else{return .25}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
       .attr("cy", function(d) { return y_poss(d.min); })
@@ -586,6 +589,7 @@ function possplot(ye,data){
 
   // Add the X Axis
   psvg.append("g")
+        .attr("class", "axisWhite")
       .attr("transform", "translate(0," + pheight + ")")
       .call(d3.axisBottom(x_poss));
       //.tickFormat(d3.format(".4r")));
@@ -609,6 +613,7 @@ function possplot(ye,data){
 
   // Add the Y Axis
   psvg.append("g")
+        .attr("class", "axisWhite")
       .call(d3.axisLeft(y_poss));
 
   // Title
@@ -620,8 +625,8 @@ function possplot(ye,data){
         .text("Number of possessions per game");
 
   var classes = d3.scaleOrdinal()
-    .domain(["Yearly maximum", "Yearly average", "Yearly minimum"])
-    .range(["#ff041d", "#ffd504", "#049bff"]);
+    .domain(["League maximum", "League average", "League minimum"])
+    .range(["#0069BA", "white", "#F00B46"]);
 
   var legend = psvg.selectAll(".legend")
       .data(classes.domain())
@@ -642,6 +647,7 @@ function possplot(ye,data){
         .attr("y", 9)
         .attr("dy", ".5em")
         .attr("font-size","12px")
+        .attr("class", "legendText")
         .text(function(d) { return d; });
 
 
@@ -708,12 +714,14 @@ function lucaline(ye,lucadata){
     //var xValues = lucadata.map(function(d){return parseFloat(d.Year);});
   // add the X Axis
   lsvg.append("g")
+    .attr("class", "axisWhite")
       .attr("transform", "translate(0," + lheight + ")")
       .call(d3.axisBottom(x)
       .tickFormat(d3.format(".4r")));
 
   // add the Y Axis
   lsvg.append("g")
+        .attr("class", "axisWhite")
       .call(d3.axisLeft(y));
 
     // Title
@@ -763,10 +771,11 @@ function lucaline(ye,lucadata){
       .attr('y', 15)
       .attr("font-size","12px")
       .attr("font-family", "Trebuchet MS, Helvetica, sans-serif")
+      .attr("class", "legendText")
       .text('3PT Attemped');
 
     legend.append('rect')
-      .style("fill", 'lightsteelblue')
+      .style("fill", '#0069BA')
       .attr('width',  70)
       .attr('height', 10)
       .attr('x', 10)
@@ -776,6 +785,7 @@ function lucaline(ye,lucadata){
       .attr('x', 85)
       .attr('y', 35)
       .attr("font-size","12px")
+      .attr("class", "legendText")
       .attr("font-family", "Trebuchet MS, Helvetica, sans-serif")
       .text('3PT Made');
 
@@ -785,19 +795,12 @@ function lucaline(ye,lucadata){
 function newmapbuilder(ye,mapcsv,mapjson){
     // Title
     svg.selectAll("circle").remove();
+    svg.selectAll("text").remove();
 
     var g = svg.append("g");
     var div = d3.select("body").append("div")	
         .attr("class", "tooltip")				
         .style("opacity", 0);
-
-    svg.append("text")
-    .attr("x", (mwidth / 2))             
-    .attr("y", 40)
-    .attr("text-anchor", "middle")  
-    .attr("class","pltTitle")
-    .text("Player Birth Place");
-
 
 //Load map
 g.selectAll("path")
@@ -834,8 +837,8 @@ g.selectAll("path")
                     .style("opacity", 0)
             })	
 
-            .attr("r", 1.5)
-            .style("fill", "#2b8cbe");
+            .attr("r", 3)
+            .style("fill", "#0069BA");
 
 //zoom and pan
 // var zoom = d3.zoom()

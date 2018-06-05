@@ -1,4 +1,19 @@
+.axisWhite line{
+  stroke: white;
+  stroke-width: 2px;
+  fill: none;
+}
 
+.axisWhite path{
+  stroke: white;
+  stroke-width: 2px;
+  fill: none;
+}
+
+.axisWhite text{
+  fill: white;
+  stroke-width: 2px;
+}  
 .ticks {
   font: 10px sans-serif;
 }
@@ -44,7 +59,7 @@ body{
     margin-left: 0px;
     margin-right: 0px;
     margin-top: 1px;
-    /*background-color: black;*/
+    background-color: black;
 }
 
 .tooltip {	
@@ -56,7 +71,7 @@ body{
     height: auto;			
     padding: 4px;				
     font: 12px sans-serif;		
-    background: #b2182b;	
+    background: #F00B46;	
     border: 4px;		
     border-radius: 8px;			
     pointer-events: none;
@@ -73,6 +88,11 @@ p { /*This is for the year filter*/
     float: left;
     font-size: 22px;
     opacity: 0.;
+    text-shadow:
+		-2px -2px 0 #F00B46,
+		2px -2px 0 #F00B46,
+    -2px 2px 0 #F00B46,		
+    2px 2px 0 #F00B46; 
 }
 
 h2 {
@@ -89,12 +109,12 @@ h1 {/*Overall Title changing the game*/
     width: 30%;
     float: left;
     left: 0%;
-    font-size: 26px;
-    opacity: 0.8;
+    font-size: 22px;
+    font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 #demo {/*This is for the year filter*/
   display: block;
-  color:black;
+  color:white;
   font-weight: bold;
   font-size: 40px;
   width: 200px;
@@ -158,19 +178,26 @@ h1 {/*Overall Title changing the game*/
   height: 500px;
   margin-left: 10%;
   margin-right: 10%;
-  margin-top: 2%;
+  margin-top: 5%;
   float: left;
 }
 
 .mylabel{
   font-size: 12px;
   font-family: "Trebuchet MS", Helvetica, sans-serif;
+  fill: white;
 }
 
 .pltTitle{
+  fill: white;
   font-size: 1.2em;
   font-family: "Trebuchet MS", Helvetica, sans-serif;
+
   /*font-weight: bold;*/
+}
+
+.legendText{
+  fill: white;
 }
 
 .infopic {
@@ -180,23 +207,42 @@ h1 {/*Overall Title changing the game*/
 
 .line {
   fill: none;
-  stroke: steelblue;
+  stroke: white;
   stroke-width: 2px;
 }
 
 .area {
-  fill: lightsteelblue;
+  fill: #0069BA;
 }
 
 .circle {
-    fill: steelblue;
+    fill: white;
+  }
+
+.circleJoe {
+    fill: #0069BA;
   }
 
 .header {
   padding: 10px 16px;
-  background: #4393c3;
+  background: #0069BA;
   color: white;
-  opacity: 0.9;
+  /*opacity: 0.95;*/
+}
+.mapper {
+  background: black;
+  color: white;
+  text-align: middle;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+
+h3 {/*World Map*/
+  margin: 0;
+  padding: 0;
+  position: relative;
+  top: 0;
+  text-align: center;
+  font-size: 26px;
 }
 
 /* Page content */
