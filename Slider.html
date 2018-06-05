@@ -669,6 +669,7 @@ function lucaline(ye,lucadata){
   
   // filter out our year
   var data_filt = lucadata.filter(function(d) { return d.Year <= ye ; }) //year filter
+  var data_dots = lucadata.filter(function(d) { return d.Year >= 1980 ; }) //year filter
   //var data = lucadata.filter(function(d){return d.Year <= ye;})
   
   // add the area
@@ -701,7 +702,7 @@ function lucaline(ye,lucadata){
 
     //add the dots
     lsvg.selectAll("dot")  
-        .data(lucadata)                   
+        .data(data_dots)                   
       .enter().append("circle")               
         .attr("r", 3.5)
         .attr("class", "circle")   
