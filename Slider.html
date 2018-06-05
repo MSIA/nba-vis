@@ -12,12 +12,11 @@
 <div class="header" id="myHeader">
   
     <head>
-        <h1> Changing The Game: The NBA from 1976 to 2015 </h1> 
+        <h1> Changing The Game:<br> The NBA from 1976 to 2015</h1> 
+        <p id="demo"></p>
     </head>
 
-    <p id="demo"></p>
-
-    <svg id="svg1" width="960" height="50"> 
+    <svg id="svg1" width="600" height="50"> 
     <filter id="this_image" x="0%" y="0%" width="100%" height="100%">
             <feImage xlink:href="NBALogo.png">
     </filter>
@@ -27,7 +26,7 @@
 <div id="line"></div>
 <!-- <div id="demo1"></div> -->
 
-
+<div id="hplot"></div>
 <div id="possplot"></div>
 <div id="map"></div>
 
@@ -89,6 +88,13 @@ d3.csv("./Pace/possessions.csv")
       d.min = +d.min;
       d.mean = +d.mean;})
       window['possdata'] = data})
+      
+// HEIGHT DATA
+var hdata = 0
+d3.csv("./Joe-Heights/HeightData.csv")
+	.get(function(data){
+		data.forEach(function(d){d.Year = +d.Year})
+		window['hdata'] = data});
 		
 /////---------------------//////////
 
@@ -159,7 +165,7 @@ var yearout = 0
 function update_year(h) {
 	handle.attr("cx", x_t(h));
 	ye = Math.round(h);
-	document.getElementById("demo").innerHTML = "Filtered Year: " + ye +""
+	document.getElementById("demo").innerHTML =  ye 
 	
 	//SET GLOBAL VARIABLES
 	window['year'] = ye;
@@ -170,18 +176,9 @@ function update_year(h) {
 	lucaline(ye,lucadata);
 	newmapbuilder(ye,mapcsv,mapjson);
 	possplot(ye,possdata);
+	heightplot(ye,hdata);
 
-    if (year <= 1985) {
-        //document.getElementById("demo1").innerHTML = "";
-        document.getElementById("demo1").innerHTML = "<img src='MJ23.png' style='width:100%; height:100%; margin: 2% '>"
-    }
-	
-	if (year > 1985) {
-		document.getElementById("demo1").innerHTML = yearout + " We are now entering the golden age!";
-	}
-	if (year > 1992) {
-		document.getElementById("demo1").innerHTML = yearout + " Matt has been born!";
-	}
+
 }
 
 ///////----------------INITIATE SVGS FOR EACH PLOT-------//////////////
@@ -203,32 +200,35 @@ var path = d3.geoPath()
 
 //////--------- LUCA LINE
 // FUNCTIONS
-
 function mousemove_3pt(d,i) {
     if (d.Year >= 1980) {
       tooltip_3pt
-          .html("3PT shots attempted: " + d3.format(".1f")(d.X3PA) +
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_3pt.html("3PT shots attempted: " + d3.format(".1f")(d.X3PA) +
                 "<br>3PT shots made: " + d3.format(".1f")(d.X3P) +
                 "<br>3PT shots %: " + d3.format(".1%")(d.X3P/d.X3PA))
-          .style("display", "inline-block")
-          .style("left", (d3.event.pageX - 75) + "px")
-          .style("top", (d3.event.pageY - 60) + "px");
+        .style("left", (d3.event.pageX) + "px")		
+        .style("top", (d3.event.pageY - 28) + "px");
     }
   }
 function mouseout_3pt(d,i) {
     tooltip_3pt
-        .style("display", "none");
+        .transition()		
+        .duration(500)		
+        .style("opacity", 0)
 };
-var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip_3pt");
+var tooltip_3pt = d3.select("body").append("div").attr("class", "tooltip").style("opacity",0);
 
 // set the dimensions and margins of the graph by div
 var lineDiv = document.getElementById("line");
 
 var lmargin = {top: 40, right: 100, bottom: 40, left: 50}, 
 	lwidth = lineDiv.clientWidth - lmargin.left - lmargin.right,
-	//lheight = lineDiv.clientHeight - lmargin.top - lmargin.bottom;
+	lheight = lineDiv.clientHeight - lmargin.top - lmargin.bottom;
     //lwidth = screen.width-500 - lmargin.left - lmargin.right,
-    lheight = 500 - lmargin.top - lmargin.bottom;
+    //lheight = 500 - lmargin.top - lmargin.bottom;
 
 // set the ranges
 var x = d3.scaleTime().range([0, lwidth]);
@@ -260,33 +260,43 @@ var lsvg = d3.select("#line").append("svg")
 
 //////------- Possesions
 // Functions
+
 function mousemove_max(d,i) {
-    ptooltip
-        .html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
-        .style("display", "inline-block")
-        .style("left", (d3.event.pageX + 5) + "px")
+    tooltip_poss
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_poss.html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
+        .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");
 }
 function mousemove_min(d,i) {
-    ptooltip
-        .html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
-        .style("display", "inline-block")
-        .style("left", (d3.event.pageX + 5) + "px")
+    tooltip_poss
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_poss.html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
+        .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");
 }
 function mousemove(d,i) {
-    ptooltip
-        .html("Possesions per game: " + d.mean)
-        .style("display", "inline-block")
-        .style("left", (d3.event.pageX + 5) + "px")
+    tooltip_poss
+        .transition()		
+        .duration(200)		
+        .style("opacity", .9);
+    tooltip_poss.html("Possesions per game: " + d.mean)
+        .style("left", (d3.event.pageX) + "px")		
         .style("top", (d3.event.pageY - 28) + "px");
+
 }
 function mouseout(d,i) {
-    ptooltip
-        .style("display", "none");
+    tooltip_poss
+        .transition()		
+        .duration(500)		
+        .style("opacity", 0)
 };
 
-var ptooltip = d3.select("body").append("div").attr("class", "ptooltip");
+var tooltip_poss = d3.select("body").append("div").attr("class", "tooltip").style("opacity",0);
 
 // Possession SVG
 // set the dimensions and margins of the graph
@@ -294,8 +304,7 @@ var possDiv = document.getElementById("possplot");
 
 var pmargin = {top: 20, right: 20, bottom: 30, left: 50},
 	pwidth = possDiv.clientWidth - pmargin.left - pmargin.right,
-    //pwidth = screen.width -500- pmargin.left - pmargin.right,
-    pheight = 500 - pmargin.top - pmargin.bottom;
+    pheight = possDiv.clientHeight - pmargin.top - pmargin.bottom;
 
 // set the ranges
 var x_poss = d3.scaleTime().range([0, pwidth]);
@@ -308,8 +317,159 @@ var psvg = d3.select("#possplot").append("svg")
     .attr("transform",
           "translate(" + pmargin.left + "," + pmargin.top + ")");
 
+// JOE HEIGHT SVG
+var heightDiv = document.getElementById("hplot");
+
+var h_margin = {top: 20, right: 20, bottom: 30, left: 40},
+    h_width = heightDiv.clientWidth - h_margin.left - h_margin.right,
+    h_height = heightDiv.clientHeight - h_margin.top - h_margin.bottom;
+
+var x_jh = d3.scaleBand()
+        .domain(['PG','SG','SF','PF','C'])
+        .range([0, h_width])
+        .paddingInner(20).paddingOuter(20)
+
+var xAxis = d3.axisBottom()
+        .scale(x_jh)
+        .tickFormat(function (d) {
+            return d;
+        });
+
+var y_jh = d3.scalePoint()
+    .range([h_height, 0]);
+
+var r = d3.scaleLinear()
+	.range([10,50])
+  .domain([1,4]);
+
+var h_svg = d3.select("#hplot").append("svg")
+    .attr("width", h_width + h_margin.left + h_margin.right)
+    .attr("height", h_height + h_margin.top + h_margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + h_margin.left + "," + h_margin.top + ")");
+
+var h_div = d3.select("#hplot").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
 
 /////////---------FUNCTIONS FOR CREATING & UPDATING PLOTS---------////////////
+/////------JOE HEIGHT PLOT
+function heightplot(ye,hdata){
+
+  h_svg.selectAll("circle").remove();
+  h_svg.selectAll("g").remove();
+
+
+  y_jh.domain(['5'+"'"+'3'+'"','5'+"'"+'4'+'"','5'+"'"+'5'+'"','5'+"'"+'6'+'"','5'+"'"+'7'+'"','5'+"'"+'8'+'"','5'+"'"+'9'+'"',
+  	'5'+"'"+'10'+'"','5'+"'"+'11'+'"','6'+"'"+'0'+'"','6'+"'"+'1'+'"','6'+"'"+'2'+'"','6'+"'"+'3'+'"','6'+"'"+'4'+'"','6'+"'"+'5'+'"',
+  	'6'+"'"+'6'+'"','6'+"'"+'7'+'"','6'+"'"+'8'+'"','6'+"'"+'9'+'"','6'+"'"+'10'+'"','6'+"'"+'11'+'"','7'+"'"+'0'+'"','7'+"'"+'1'+'"',
+  	'7'+"'"+'2'+'"','7'+"'"+'3'+'"','7'+"'"+'4'+'"','7'+"'"+'5'+'"','7'+"'"+'6'+'"','7'+"'"+'7'+'"'])
+ 
+  var yAxis = d3.axisLeft(y_jh);
+  var h_dataf = hdata.filter(function(hdata) { return hdata.Year == ye; });
+
+  var groupedData = d3.nest()
+  	.key(function(d) {return d.Position;})
+  	.key(function(d) {return d.Height})
+  	/*.rollup(function(hts) {
+  		return hts.length;
+  	})*/
+  	.entries(h_dataf)
+
+  h_svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + h_height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      //.attr("transform, translate)" + width/2 + " ," + (height + margin.top + 20) + ")")
+      .attr("x", h_width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Position");
+
+  h_svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Height")
+      
+/*
+  xAxis.append('text')
+          .attr('class', 'axis-label')
+          .attr('x', width / 2)
+          .attr('y', 90)
+          .text("Position");
+
+  yAxis.append('text')
+          .attr('class', 'axis-label')
+          .attr('x', -height / 2)
+          .attr('y', -100)
+          .attr('transform', `rotate(-90)`)
+          .style('text-anchor', 'middle')
+          .text("Height");
+          */
+
+
+var groups = h_svg.selectAll(".circle")
+	.data(groupedData)
+	.enter().append("g")
+	.attr("class","circle");
+
+var circles = groups.selectAll("circle")
+	.data(function(d) {return d.values})
+	.enter().append("circle")
+	.attr("cx", function(d) {
+		//console.log(d3.select(this).node().parentNode.__data__.key)
+		return x_jh(d3.select(this).node().parentNode.__data__.key);
+	})
+	.attr("cy", function(d,i) {
+		//console.log(d)
+		//console.log(i)
+		//console.log(d.key)
+		return y_jh(d.key);
+	})
+	.attr("r", function(d,i) {
+		// console.log(d)
+// 		console.log(i)
+// 		console.log(d.values)
+// 		console.log(d.values.length)
+		return r(Math.sqrt(d.values.length / 3.14));
+	})
+	.on("mouseover", function(d,i) {	
+					//console.log(d.values.length)	
+                    h_div.transition()		
+                        .duration(200)		
+                        .style("opacity", .9);
+                    var mystring = "<b>" + d3.select(this).node().parentNode.__data__.key + ", " + d.key + "</b>";
+                    var i = 0;
+                    while (i < d.values.length) {
+                    	// console.log(i)
+//                     	console.log(d.values[i].Player)
+                    	mystring = mystring + "<h2>" + d.values[i].Player + "</h2>";
+                    	i++;
+                    };		
+                    h_div .html(mystring)	
+                        .style("left", (d3.event.pageX) + "px")		
+                        .style("top", (d3.event.pageY - 28) + "px");
+                        	
+                    })					
+            .on("mouseout", function(d) {		
+                h_div.transition()		
+                    .duration(500)		
+                    .style("opacity", 0)
+            });
+            
+
+
+}
+
+
 /////------POSSESION PLOT FUNCTION
 function possplot(ye,data){
 
@@ -387,7 +547,7 @@ function possplot(ye,data){
         .attr("x", (pwidth / 2))             
         .attr("y", 0)
         .attr("text-anchor", "middle")  
-        .style("font-size", "20px")
+        .style("font-size", "1.2em")
         .attr("font-weight", "bold")
         .text("Number of possessions per game");
 
@@ -473,9 +633,9 @@ function lucaline(ye,lucadata){
             .attr("x", (lwidth / 2))             
             .attr("y", 0 - (lmargin.top / 2))
             .attr("text-anchor", "middle")  
-            .style("font-size", "16px")
+            .style("font-size", "1.2em")
             .attr("font-weight", "bold")
-            .text("Number of 3 point shots attempted and made per game");
+            .text("Number of 3-pt shots attempted and made per game");
 
     // X axis label
     lsvg.append('text')
@@ -527,10 +687,13 @@ function lucaline(ye,lucadata){
 
 ///////-------NEW MAPBUILDER (NO ZOOM)
 function newmapbuilder(ye,mapcsv,mapjson){
+    svg.selectAll("circle").remove();
 var g = svg.append("g");
 var div = d3.select("body").append("div")	
     .attr("class", "tooltip")				
     .style("opacity", 0);
+
+
 //Load map
 g.selectAll("path")
       .data(topojson.object(mapjson, mapjson.objects.countries)
