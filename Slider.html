@@ -160,9 +160,9 @@ var handle = slider.insert("circle", ".track-overlay")
 
 // Add Gratuitous animated intro
 slider.transition() // Gratuitous intro!
-    .duration(1500)
+    .duration(2000)
     .tween("hue", function() {
-      var i = d3.interpolate(1976, 2000);
+      var i = d3.interpolate(2018, 1977);
       return function(t) { update_year(i(t)); };
     });
 
@@ -180,7 +180,10 @@ var yearout = 0
 function update_year(h) {
 	handle.attr("cx", x_t(h));
 	ye = Math.round(h);
-	document.getElementById("demo").innerHTML =  ye 
+	prev_ye = ye -1;
+	year_range = prev_ye.toString() +" - "+ ye.toString();
+	
+	document.getElementById("demo").innerHTML =  year_range ;
 	
 	//SET GLOBAL VARIABLES
 	window['year'] = ye;
@@ -203,7 +206,7 @@ function play(d,i,ye){
 console.log(d,i,ye)
 slider.transition() // Gratuitous intro!
     .duration(35000)
-    //.ease("linear")
+    .ease(d3.easeLinear)
     .tween("hue", function() {
       var i = d3.interpolate(ye, 2017);
       return function(t) { update_year(i(t)); };
