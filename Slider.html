@@ -384,7 +384,7 @@ var h_margin = {top: 50, right: 20, bottom: 40, left: 50},
 var x_jh = d3.scaleBand()
         .domain(['PG','SG','SF','PF','C'])
         .range([0, h_width])
-        .paddingInner(20).paddingOuter(20)
+        .paddingInner(20).paddingOuter(20);
 
 var xAxis = d3.axisBottom()
         .scale(x_jh)
@@ -392,8 +392,9 @@ var xAxis = d3.axisBottom()
             return d;
         });
 
-var y_jh = d3.scalePoint()
-    .range([h_height, 0]);
+var y_jh = d3.scaleBand()
+    .range([h_height, 0])
+    .paddingInner(20).paddingOuter(20);
 
 var r = d3.scaleLinear()
 	.range([10,50])
