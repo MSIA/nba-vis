@@ -97,7 +97,7 @@ d3.csv("./Pace/possessions.csv")
       
 // HEIGHT DATA
 var hdata = 0
-d3.csv("./Joe-Heights/HeightData.csv")
+d3.csv("./Data/HeightData.csv")
 	.get(function(data){
 		data.forEach(function(d){d.Year = +d.Year})
 		window['hdata'] = data});
