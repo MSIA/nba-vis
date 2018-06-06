@@ -1,3 +1,4 @@
+/* Make our axes white for the black background*/
 .axisWhite line{
   stroke: white;
   stroke-width: 2px;
@@ -14,6 +15,8 @@
   fill: white;
   stroke-width: 2px;
 }  
+
+/*Slider Stuff*/
 .ticks {
   font: 10px sans-serif;
 }
@@ -78,7 +81,8 @@ body{
     color: white;			
 }
 
-p { /*This is for the year filter*/
+/*This is for the year filter*/
+p { 
     display: block;
     margin: 0 auto;
     padding: 0;
@@ -99,20 +103,23 @@ h2 {
   font: 12px sans-serif;
 }
 
-h1 {/*Overall Title changing the game*/
+/*Overall Title changing the game*/
+h1 {
     display: block;
     margin: 0;
     padding: 0;
     position: relative;
     top: 0;
     text-align: center;
-    width: 30%;
+    width: 25%;
     float: left;
     left: 0%;
     font-size: 22px;
     font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
-#demo {/*This is for the year filter*/
+
+/*This is for the year filter*/
+#demo {
   display: block;
   color:white;
   font-weight: bold;
@@ -123,13 +130,20 @@ h1 {/*Overall Title changing the game*/
   text-align: center;
   font-family: Impact, Charcoal, sans-serif;
 }
-#animate {/*Play */
+
+/*this is for the button*/
+#buttondiv {
   display: block;
+  font-size: 10px;
+  width: 50px; /*37*/
+  height: 50px;
   margin: 0 auto;
   padding: 0;
-  width: 10%;
-  opacity: 0.8;
+  float: left;
+  left: 0%;
+
 }
+
 #svg1 {
   display: block;
   position: relative;
@@ -182,10 +196,10 @@ h1 {/*Overall Title changing the game*/
 
 #map {
   width: 80%; /*37*/
-  height: 500px;
+  height: 450px;
   margin-left: 10%;
   margin-right: 10%;
-  margin-top: 5%;
+  margin-top: 3%;
   float: left;
 }
 
@@ -230,12 +244,8 @@ h1 {/*Overall Title changing the game*/
     fill: #0069BA;
   }
 
-.header {
-  padding: 10px 16px;
-  background: #0069BA;
-  color: white;
-  /*opacity: 0.95;*/
-}
+
+/*World Map Header*/
 .mapper {
   background: black;
   color: white;
@@ -243,13 +253,72 @@ h1 {/*Overall Title changing the game*/
   font-family: "Trebuchet MS", Helvetica, sans-serif;
 }
 
-h3 {/*World Map*/
+h3 {
   margin: 0;
   padding: 0;
   position: relative;
   top: 0;
   text-align: center;
   font-size: 26px;
+}
+
+/* BUTTON STUFF*/
+body {
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+}
+/*
+.button{
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}*/
+
+.button rect {
+  stroke: #F00B46;
+  stroke-width: 2px;
+}
+
+.button rect.pressed {
+  fill: #F00B46; 
+  stroke: white;
+  opacity: 0.9;
+}
+
+.button #gradient-start {
+  stop-color: white;
+  stop-opacity: 1;
+}
+
+.button #gradient-stop {
+  stop-color: white; 
+  stop-opacity: 1;
+}
+
+.button #gradient-start.active, .button #gradient-start.pressed {
+  stop-color: #F00B46; 
+}
+
+.button #gradient-stop.active, .button #gradient-stop.pressed {
+  stop-color: #F00B46; 
+}
+
+.button text {
+  font-size: 16px;
+  fill: #F00B46;
+  pointer-events: none;
+  text-anchor: middle;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/*Header Ribbon*/
+.header {
+  padding: 10px 16px;
+  background: #0069BA;
+  color: white;
+  /*opacity: 0.95;*/
 }
 
 /* Page content */
@@ -269,3 +338,5 @@ h3 {/*World Map*/
 .sticky + .content {
   padding-top: 102px;
 }
+
+
