@@ -199,7 +199,16 @@ function update_year(h) {
 
 ///////----------------INITIATE SVGS FOR EACH PLOT-------//////////////
 // -----ANIMATION BUTTON
-
+function play(d,i,ye){
+console.log(d,i,ye)
+slider.transition() // Gratuitous intro!
+    .duration(35000)
+    //.ease("linear")
+    .tween("hue", function() {
+      var i = d3.interpolate(ye, 2017);
+      return function(t) { update_year(i(t)); };
+    });
+}
 
 var button_client = document.getElementById("buttondiv");
 
@@ -213,8 +222,8 @@ var button_svg = d3.select('#buttondiv').append('svg')
     .attr('height', button_height);
 
 var button = d3.button()
-    .on('press', function(d, i) { console.log("Pressed", d, i, this.parentNode)})
-    .on('release', function(d, i) { console.log("Released", d, i, this.parentNode)});
+    .on('press', function(d, i) {play(d,i,window['ye']) })//console.log("Pressed", d, i, this.parentNode)})
+    .on('release', function(d, i) { slider.interrupt()})//console.log("Released", d, i, this.parentNode)});
 
     // Add buttons
 var button = button_svg.selectAll('.button')
