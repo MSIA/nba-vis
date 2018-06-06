@@ -13,7 +13,7 @@
 <div class="header" id="myHeader">
   
     <head>
-        <h1> Changing The Game:<br> The NBA from 1976 to 2015</h1> 
+        <h1> Changing The Game:<br> The NBA from 1976 to 2017</h1> 
         <p id="demo"></p>
         <div id="buttondiv"></div>
     </head>
@@ -453,24 +453,13 @@ function heightplot(ye,hdata){
       .attr("class", "axisWhite")
       .attr("transform", "translate(0," + h_height + ")")
       .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      //.attr("transform, translate)" + width/2 + " ," + (height + margin.top + 20) + ")")
-      .attr("x", h_width)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("Position");
+
 
   h_svg.append("g")
       .attr("class", "axisWhite")
       .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Height")
+
+
       
 /*
   xAxis.append('text')
@@ -663,10 +652,10 @@ function possplot(ye,data){
         .attr("y", 0)
         .attr("text-anchor", "middle")  
         .attr("class","pltTitle")
-        .text("Number of possessions per game");
+        .text("Number of Possessions per Game");
 
   var classes = d3.scaleOrdinal()
-    .domain(["League maximum", "League average", "League minimum"])
+    .domain(["League Maximum", "League Average", "League Minimum"])
     .range(["#0069BA", "white", "#F00B46"]);
 
   var legend = psvg.selectAll(".legend")
@@ -716,14 +705,14 @@ function lucaline(ye,lucadata){
   // add the area
     lsvg.append("path")
        .data([lucadata])
-       .style("opacity", 0.2)
+       .style("opacity", 0.3)
        .attr("class", "area")
        .attr("d", area);
 
   // add the valueline path.
   lsvg.append("path")
       .data([lucadata])
-      .style("opacity", 0.2)
+      .style("opacity", 0.3)
       .attr("class", "line")
       .attr("d", valueline);
 
@@ -772,7 +761,7 @@ function lucaline(ye,lucadata){
             .attr("y", 0 - (lmargin.top / 2))
             .attr("text-anchor", "middle")  
             .attr("class","pltTitle")
-            .text("Number of 3-pt shots attempted and made per game");
+            .text("Number of 3-pt Shots Attempted and Made per Game");
 
     // X axis label
     lsvg.append('text')

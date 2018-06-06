@@ -91,7 +91,7 @@ p {
     width: 38%;
     float: left;
     font-size: 22px;
-    opacity: 0.;
+    opacity: 1;
     text-shadow:
 		-2px -2px 0 #F00B46,
 		2px -2px 0 #F00B46,
@@ -211,7 +211,7 @@ h1 {
 
 .pltTitle{
   fill: white;
-  font-size: 1.2em;
+  font-size: 1.0em;
   font-family: "Trebuchet MS", Helvetica, sans-serif;
 
   /*font-weight: bold;*/
@@ -318,7 +318,7 @@ body {
   padding: 10px 16px;
   background: #0069BA;
   color: white;
-  /*opacity: 0.95;*/
+  opacity: 0.95;
 }
 
 /* Page content */
@@ -331,7 +331,7 @@ body {
   position: fixed;
   top: 0;
   width: 100%;
-  opacity: 0.5;
+  opacity: 0.85;
 }
 
 /* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
