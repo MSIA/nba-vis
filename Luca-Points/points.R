@@ -7,7 +7,7 @@ library(reshape2)
 dt = read.csv("../Data/team_sums_norm.csv", stringsAsFactors = F)
 
 skinny = dt %>%
-  filter(Year >= 1977) %>%
+  filter(Year >= 1978) %>%
   select(c("Year", "Tm", "PTS"))
 
 new_df = skinny %>%
@@ -32,4 +32,6 @@ new_df$mean = round(new_df$mean, 2)
 new_df$max = round(new_df$max, 2)
 new_df$min = round(new_df$min, 2)
 
+empty_row = strsplit(",,,,,,1977-01-01", ",")[[1]]
+new_df = rbind(empty_row, new_df)
 write.csv(new_df,  "points.csv", row.names = F)

@@ -19,34 +19,28 @@
 <script>
 
 function mousemove_max(d,i) {
-  if (d.year == ye) {
     tooltip
         .html("Team: " + d.team_max + "<br>Possesions per game: " + d.max)
         .style("display", "inline-block")
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
-  }
 }
 
 function mousemove_min(d,i) {
-  if (d.year == ye) {
     tooltip
         .html("Team: " + d.team_min + "<br>Possesions per game: " + d.min)
         .style("display", "inline-block")
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
-  }
 }
 
 
 function mousemove(d,i) {
-  if (d.year == ye) {
     tooltip
         .html("Possesions per game: " + d.mean)
         .style("display", "inline-block")
         .style("left", (d3.event.pageX + 5) + "px")
         .style("top", (d3.event.pageY - 28) + "px");
-  }
 }
 
 function mouseout(d,i) {
@@ -102,9 +96,9 @@ d3.csv("points.csv", function(error, data) {
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
-      .attr("r", function(d) { return 5*(d.year != ye) + 10*(d.year == ye) })
+      .attr("r", 7.5)
       .style("fill", '#ff041d')
-      .style("opacity", function(d) { return 0.1*(d.year != ye) + (d.year == ye) })
+      .style("opacity", function(d) { return 0.2*(d.year != ye) + (d.year == ye) })
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.max); })
       .on("mousemove",mousemove_max)
@@ -114,9 +108,9 @@ d3.csv("points.csv", function(error, data) {
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
-      .attr("r", function(d) { return 5*(d.year != ye) + 10*(d.year == ye) })
+      .attr("r", 7.5)
       .style("fill", '#ffd504')
-      .style("opacity", function(d) { return 0.1*(d.year != ye) + (d.year == ye) })
+      .style("opacity", function(d) { return 0.2*(d.year != ye) + (d.year == ye) })
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.mean); })
       .on("mousemove",mousemove)
@@ -126,9 +120,9 @@ d3.csv("points.csv", function(error, data) {
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
-      .attr("r", function(d) { return 5*(d.year != ye) + 10*(d.year == ye) })
+      .attr("r", 7.5)
       .style("fill", '#049bff')
-      .style("opacity", function(d) { return 0.1*(d.year != ye) + (d.year == ye) })
+      .style("opacity", function(d) { return 0.2*(d.year != ye) + (d.year == ye) })
       .attr("cx", function(d) { return x(d.date); })
       .attr("cy", function(d) { return y(d.min); })
       .on("mousemove",mousemove_min)
@@ -167,7 +161,7 @@ d3.csv("points.csv", function(error, data) {
     .text("Evolution of the number of points per game");
 
   var classes = d3.scaleOrdinal()
-    .domain(["Yearly maximum", "Yearly average", "Yearly minimum"])
+    .domain(["League maximum", "League average", "League minimum"])
     .range(["#ff041d", "#ffd504", "#049bff"]);
 
   var legend = svg.selectAll(".legend")
