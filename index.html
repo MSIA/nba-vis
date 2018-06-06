@@ -62,13 +62,13 @@
 //////-----READ IN DATA----/////////
 // MAP DATA
 mapcsv = 0
-d3.csv("./Chris Globe/MapData.csv")
+d3.csv("./Globe/MapData.csv")
 			.get(function(data){
 			data.forEach(function(d){d.Year=+d.Year})
 			window['mapcsv'] = data});
 
 mapjson = 0   
-d3.json("./Chris Globe/world-110m2.json")
+d3.json("./Globe/world-110m2.json")
 		.get(function(data){
 			window['mapjson'] = data});
 
@@ -76,7 +76,7 @@ d3.json("./Chris Globe/world-110m2.json")
 // LUCA LINE DATA
 var parseYear = d3.timeParse("%Y");	
 lucadata = 0
-d3.csv("./Luca-Line/data.csv")
+d3.csv("./Line/data.csv")
 		.get(function(data){
 		data.forEach(function(d){d.X3PA = +d.X3PA;
                                 d.X3P = +d.X3P; 
