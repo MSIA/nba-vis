@@ -9,6 +9,24 @@
   pointer-events: none;
 }
 
+.maxline {
+  fill: none;
+  stroke: #ff041d;
+  stroke-width: 2px;
+}
+
+.meanline {
+  fill: none;
+  stroke: #ffd504;
+  stroke-width: 2px;
+}
+
+.minline {
+  fill: none;
+  stroke: #049bff;
+  stroke-width: 2px;
+}
+
 </style>
 <body>
 
@@ -68,6 +86,18 @@ var parseTime = d3.timeParse("%Y-%m-%d");
 var x = d3.scaleTime().range([0, width]);
 var y = d3.scaleLinear().range([height, 0]);
 
+var maxline = d3.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.max); });
+
+var minline = d3.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.min); });
+
+var meanline = d3.line()
+      .x(function(d) { return x(d.date); })
+      .y(function(d) { return y(d.mean); });
+
 // append the svg obgect to the body of the page
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
@@ -93,12 +123,13 @@ d3.csv("possessions.csv", function(error, data) {
   console.log(data);
 
   ye = 2004
+  data_filt = data.filter(function(d) { return d.year > 1977 ; })
 
   // Scale the range of the data
   x.domain(d3.extent(data, function(d) { return d.date; }));
   y.domain([65, 5+d3.max(data, function(d) { return d.max; })]);
       
-  // Add the scatterplot
+  // Add the scatterplot for max
   svg.selectAll("dot")
       .data(data)
     .enter().append("circle")
@@ -109,6 +140,13 @@ d3.csv("possessions.csv", function(error, data) {
       .attr("cy", function(d) { return y(d.max); })
       .on("mousemove",mousemove_max)
       .on("mouseout",mouseout);
+
+  //Add the line for max
+  svg.append("path")
+        .data([data_filt])
+        .style("opacity", 0.1)
+        .attr("class", "maxline")
+        .attr("d", maxline);
 
   // Add the scatterplot
   svg.selectAll("dot")
@@ -122,6 +160,13 @@ d3.csv("possessions.csv", function(error, data) {
       .on("mousemove",mousemove)
       .on("mouseout",mouseout);
 
+  //Add the line for mean
+  svg.append("path")
+        .data([data_filt])
+        .style("opacity", 0.1)
+        .attr("class", "meanline")
+        .attr("d", meanline);
+
   // Add the scatterplot
   svg.selectAll("dot")
       .data(data)
@@ -133,6 +178,13 @@ d3.csv("possessions.csv", function(error, data) {
       .attr("cy", function(d) { return y(d.min); })
       .on("mousemove",mousemove_min)
       .on("mouseout",mouseout);
+
+    //Add the line for min
+    svg.append("path")
+        .data([data_filt])
+        .style("opacity", 0.1)
+        .attr("class", "minline")
+        .attr("d", minline);
 
   // Add the X Axis
   svg.append("g")
