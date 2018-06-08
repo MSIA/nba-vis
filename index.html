@@ -195,7 +195,7 @@ function update_year(h) {
 	newmapbuilder(ye,mapcsv,mapjson);
 	possplot(ye,possdata);
 	heightplot(ye,hdata);
-    change_info(ye, infoData)
+  change_info(ye, infoData)
 
 
 }
@@ -352,6 +352,18 @@ function mouseout(d,i) {
         .duration(500)		
         .style("opacity", 0)
 };
+
+var maxline = d3.line()
+    .x(function(d) { return x_poss(d.date); })
+    .y(function(d) { return y_poss(d.max); });
+
+var minline = d3.line()
+      .x(function(d) { return x_poss(d.date); })
+      .y(function(d) { return y_poss(d.min); });
+
+var meanline = d3.line()
+      .x(function(d) { return x_poss(d.date); })
+      .y(function(d) { return y_poss(d.mean); });
 
 var tooltip_poss = d3.select("body").append("div").attr("class", "tooltip").style("opacity",0);
 
@@ -562,10 +574,11 @@ function possplot(ye,data){
     psvg.selectAll("g").remove();
     psvg.selectAll("text").remove();
     psvg.selectAll("circle").remove();
+    psvg.selectAll("path").remove();
+    //psvg.selectAll("line").remove();
 
+  var datafilt = data.filter(function(d) { return d.year > 1977 ; })
   
-  var datafilt = data.filter(function(data) { return data.year == ye ; })
-
   // Scale the range of the data
   x_poss.domain(d3.extent(data, function(d) { return d.date; }));
   y_poss.domain([65, 5+d3.max(data, function(d) { return d.max; })]);
@@ -576,15 +589,21 @@ function possplot(ye,data){
     .enter().append("circle")
       .attr("r", 5)
       .style("fill", '#0069BA')
-      //.style("opacity", 0.1)
       .style("opacity", function(d){
       			if(parseInt(d.year) == ye){return 1}
-      			else{return .25}
+      			else{return .2}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
       .attr("cy", function(d) { return y_poss(d.max); })
       .on("mousemove",mousemove_max)
 		.on("mouseout",mouseout);
+
+  //Add the line for max
+  psvg.append("path")
+        .data([datafilt])
+        .style("opacity", 0.2)
+        .attr("class", "maxline")
+        .attr("d", maxline);
 
   // AVERAGE scatterplot
   psvg.selectAll("dot")
@@ -592,15 +611,21 @@ function possplot(ye,data){
     .enter().append("circle")
       .attr("r", 5)
       .style("fill", 'white')
-      //.style("opacity", 0.1)
       .style("opacity", function(d){
       			if(parseInt(d.year) == ye){return 1}
-      			else{return .25}
+      			else{return .2}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
       .attr("cy", function(d) { return y_poss(d.mean); })
 		.on("mousemove",mousemove)
 		.on("mouseout",mouseout);
+
+  //Add the line for mean
+  psvg.append("path")
+        .data([datafilt])
+        .style("opacity", 0.2)
+        .attr("class", "meanline")
+        .attr("d", meanline);
 
   // MINIMUM scatterplot
   psvg.selectAll("dot")
@@ -608,15 +633,21 @@ function possplot(ye,data){
     .enter().append("circle")
       .attr("r", 5)
       .style("fill", '#F00B46')
-      //.style("opacity", 0.1)
       .style("opacity", function(d){
       			if(parseInt(d.year) == ye){return 1}
-      			else{return .25}
+      			else{return .2}
       			})
       .attr("cx", function(d) { return x_poss(d.date); })
       .attr("cy", function(d) { return y_poss(d.min); })
         .on("mousemove",mousemove_min)
 		.on("mouseout",mouseout);
+
+  //Add the line for min
+  psvg.append("path")
+        .data([datafilt])
+        .style("opacity", 0.2)
+        .attr("class", "minline")
+        .attr("d", minline);
 
   // Add the X Axis
   psvg.append("g")

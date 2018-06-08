@@ -339,4 +339,20 @@ body {
   padding-top: 102px;
 }
 
+.maxline {
+  fill: none;
+  stroke: #0069BA;
+  stroke-width: 2px;
+}
 
+.meanline {
+  fill: none;
+  stroke: white;
+  stroke-width: 2px;
+}
+
+.minline {
+  fill: none;
+  stroke: #F00B46;
+  stroke-width: 2px;
+}
