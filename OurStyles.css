@@ -242,6 +242,9 @@ h1 {
 
 .circleJoe {
     fill: #0069BA;
+    opacity: 0.85;
+    stroke: white;
+    stroke-opacity: 0.85;
   }
 
 
